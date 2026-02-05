@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PDF Scroll Viewer</title>
+  <style>
+    :root { --page-gap: 18px; --bg: #111; --page-bg: #fff; }
+    body { margin:0; background:var(--bg); font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      padding:10px 14px; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+      color:#fff; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    header .left { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    header input[type="text"]{
+      width:min(520px, 60vw);
+      padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08); color:#fff; outline:none;
+    }
+    header button {
+      padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.12); color:#fff; cursor:pointer;
+    }
+    header button:hover { background: rgba(255,255,255,0.18); }
+    header .right { opacity:0.9; font-size: 13px; }
+    #viewer {
+      display:flex; flex-direction:column; align-items:center;
+      padding: 18px 10px 60px;
+      gap: var(--page-gap);
+    }
+    .page {
+      width: min(1100px, 96vw);
+      background: var(--page-bg);
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+    .page canvas { display:block; width:100%; height:auto; }
+    .skeleton {
+      width:100%; aspect-ratio: 8.5 / 11;
+      background: linear-gradient(90deg, #f3f3f3, #e9e9e9, #f3f3f3);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite linear;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .error { color:#fff; padding:20px; max-width: 900px; margin: 40px auto; }
+    .hint { opacity:0.85; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <strong>PDF Scroll Viewer</strong>
+      <input id="pdfUrl" type="text" value="sample.pdf" aria-label="PDF URL" />
+      <button id="loadBtn">Load</button>
+      <span class="hint">Tip: replace <code>sample.pdf</code> with your PDF filename</span>
+    </div>
+    <div class="right" id="status">Idle</div>
+  </header>
+
+  <main id="viewer"></main>
+
+  <!-- PDF.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.js"></script>
+  <script>
+    // PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.js";
+
+    const viewer = document.getElementById("viewer");
+    const pdfUrlInput = document.getElementById("pdfUrl");
+    const statusEl = document.getElementById("status");
+    const loadBtn = document.getElementById("loadBtn");
+
+    // How wide you want pages rendered (in CSS px). Canvas will scale to container width.
+    const TARGET_RENDER_WIDTH = 1100;
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+
+    function clearViewer() { viewer.innerHTML = ""; }
+
+    function makePageShell(pageNumber) {
+      const wrap = document.createElement("div");
+      wrap.className = "page";
+      wrap.dataset.pageNumber = String(pageNumber);
+
+      // skeleton placeholder while page renders
+      const skel = document.createElement("div");
+      skel.className = "skeleton";
+      wrap.appendChild(skel);
+
+      return wrap;
+    }
+
+    async function renderPageToCanvas(pdf, pageNumber, container) {
+      const page = await pdf.getPage(pageNumber);
+
+      // Determine scale to hit target render width (improves sharpness)
+      const viewport1 = page.getViewport({ scale: 1 });
+      const scale = TARGET_RENDER_WIDTH / viewport1.width;
+      const viewport = page.getViewport({ scale });
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { alpha: false });
+
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+
+      // Replace skeleton with canvas
+      container.innerHTML = "";
+      container.appendChild(canvas);
+
+      await page.render({ canvasContext: ctx, viewport }).promise;
+    }
+
+    function setupLazyRendering(pdf, numPages) {
+      // Create shells first so the scroll layout is correct immediately
+      for (let i = 1; i <= numPages; i++) {
+        viewer.appendChild(makePageShell(i));
+      }
+
+      const io = new IntersectionObserver(async (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+
+          const el = entry.target;
+          const pageNumber = Number(el.dataset.pageNumber);
+          if (el.dataset.rendered === "1") {
+            io.unobserve(el);
+            continue;
+          }
+
+          el.dataset.rendered = "1";
+          try {
+            setStatus(`Rendering page ${pageNumber} / ${numPages}…`);
+            await renderPageToCanvas(pdf, pageNumber, el);
+          } catch (e) {
+            el.innerHTML = `<div class="error">Failed to render page ${pageNumber}. ${String(e)}</div>`;
+          } finally {
+            io.unobserve(el);
+            setStatus(`Ready (${numPages} pages)`);
+          }
+        }
+      }, { root: null, rootMargin: "800px 0px", threshold: 0.01 });
+
+      document.querySelectorAll(".page").forEach(el => io.observe(el));
+    }
+
+    async function loadPdf(url) {
+      clearViewer();
+      setStatus("Loading PDF…");
+
+      try {
+        const loadingTask = pdfjsLib.getDocument({
+          url,
+          // If you host cross-domain and get CORS errors, host the PDF on same site.
+          withCredentials: false
+        });
+
+        const pdf = await loadingTask.promise;
+        setStatus(`Loaded. Preparing ${pdf.numPages} pages…`);
+        setupLazyRendering(pdf, pdf.numPages);
+      } catch (e) {
+        viewer.innerHTML = `
+          <div class="error">
+            <h2>Couldn’t load the PDF</h2>
+            <p>${String(e)}</p>
+            <p>Common cause: CORS (PDF must be hosted on the same domain as this page, or allow cross-origin).</p>
+          </div>
+        `;
+        setStatus("Error");
+      }
+    }
+
+    loadBtn.addEventListener("click", () => loadPdf(pdfUrlInput.value.trim()));
+    pdfUrlInput.addEventListener("keydown", (e) => { if (e.key === "Enter") loadPdf(pdfUrlInput.value.trim()); });
+
+    // Auto-load default
+    loadPdf(pdfUrlInput.value.trim());
+  </script>
+</body>
+</html>
