@@ -18,6 +18,7 @@
       --text: #111;
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
+
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     }
 
@@ -28,7 +29,7 @@
       font-family: var(--font);
     }
 
-    /* ================= HEADER ================= */
+    /* ================= HEADER (DESKTOP DEFAULT) ================= */
 
     header{
       position: sticky;
@@ -119,7 +120,7 @@
       font-weight: 700;
     }
 
-    /* Thin divider between Glass Manual and Download PDF */
+    /* Thin divider between Glass Manual and Download PDF (desktop + mobile) */
     .divider{
       width:1px;
       height:18px;
@@ -178,11 +179,12 @@
     }
 
     /* ================= SPACER ================= */
-    #topSpacer{ height: 18px; }
+    #topSpacer{
+      height: 18px; /* desktop spacing */
+    }
 
     /* ================= PDF VIEWER ================= */
 
-    /* Default single-column viewer */
     #viewer{
       display:flex;
       flex-direction:column;
@@ -218,29 +220,6 @@
       100%{ background-position: -200% 0; }
     }
 
-    /* ================= DESKTOP "SPREAD" MODE (Glass Manual only) =================
-       Two pages side-by-side, fill the available horizontal space proportionally.
-       Not applied on mobile.
-    */
-    @media (min-width: 641px){
-      body.spread #viewer{
-        display:grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: var(--page-gap);
-
-        /* ✅ This is the key change: remove the 1100px cap and let it fill the window */
-        width: min(98vw, 1800px);   /* fill left/right, but keep a reasonable max */
-        margin: 0 auto;
-        padding: 0 0 60px;         /* keep bottom padding; side padding handled by width */
-        align-items:start;
-        justify-content:center;
-      }
-
-      body.spread .page{
-        width: 100%;
-      }
-    }
-
     /* ================= MOBILE ONLY ================= */
     @media (max-width: 640px){
       header{
@@ -249,7 +228,7 @@
         gap: 8px;
       }
 
-      /* Mobile: name + years on ONE ROW */
+      /* On mobile: name + years on ONE ROW */
       .brand{
         flex-direction: row;
         align-items: baseline;
@@ -259,7 +238,7 @@
         white-space: nowrap;
       }
 
-      /* Keep controls in one line */
+      /* Force controls into one line */
       .controls{
         width: 100%;
         justify-content: center;
@@ -272,6 +251,7 @@
         gap: 6px;
       }
 
+      /* Make tabs slightly smaller so Download stays inline */
       .tab{
         font-size: 11px;
         padding: 6px 8px;
@@ -333,14 +313,9 @@
     const loadingBar = document.getElementById("loadingBar");
     const loadingBarInner = document.getElementById("loadingBarInner");
 
-    const GLASS_MANUAL = "glass-construction-manual.pdf";
-
     let observer = null;
     let loadToken = 0;
-
-    function isDesktop(){
-      return window.matchMedia("(min-width: 641px)").matches;
-    }
+    const TARGET_WIDTH = 1100;
 
     function showLoading(){
       loadingBar.classList.add("show");
@@ -366,11 +341,6 @@
       }
     }
 
-    function applySpreadModeFor(url){
-      const enable = (url === GLASS_MANUAL) && isDesktop();
-      document.body.classList.toggle("spread", enable);
-    }
-
     function setActive(tab){
       tabs.forEach(t => t.setAttribute("aria-selected", t === tab ? "true" : "false"));
       downloadBtn.href = tab.dataset.pdf;
@@ -384,37 +354,27 @@
       return wrap;
     }
 
-    function getTargetWidthPx(container){
-      // Render to the actual container width for crisp output.
-      // In spread mode this becomes half of the wide layout.
-      const w = Math.floor(container.getBoundingClientRect().width);
-      return Math.max(320, w);
-    }
-
     async function renderPage(pdf, pageNumber, container){
       const page = await pdf.getPage(pageNumber);
-
-      const viewport1 = page.getViewport({ scale: 1 });
-      const targetWidth = getTargetWidthPx(container);
-      const scale = targetWidth / viewport1.width;
-      const viewport = page.getViewport({ scale });
+      const vp1 = page.getViewport({ scale: 1 });
+      const scale = TARGET_WIDTH / vp1.width;
+      const vp = page.getViewport({ scale });
 
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d", { alpha: false });
 
-      canvas.width = Math.floor(viewport.width);
-      canvas.height = Math.floor(viewport.height);
+      canvas.width = Math.floor(vp.width);
+      canvas.height = Math.floor(vp.height);
 
       container.innerHTML = "";
       container.appendChild(canvas);
 
-      await page.render({ canvasContext: ctx, viewport }).promise;
+      await page.render({ canvasContext: ctx, viewport: vp }).promise;
     }
 
     async function loadPdf(url){
       const token = ++loadToken;
 
-      applySpreadModeFor(url);
       clearViewer();
       showLoading();
       setProgress(10);
@@ -444,9 +404,11 @@
             if (token !== loadToken) return;
 
             const pageNumber = Number(entry.target.dataset.page);
+
             await renderPage(pdf, pageNumber, entry.target);
 
             setProgress(75 + (pageNumber / pdf.numPages) * 23);
+
             if (pageNumber === 1) hideLoading();
           }
         }, { rootMargin: "900px 0px" });
@@ -508,20 +470,6 @@
         ticking = true;
       }
     }, { passive: true });
-
-    // Re-render Glass Manual on resize so pages stay crisp and fill the new width
-    let resizeTimer = null;
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        const selected = document.querySelector('.tab[aria-selected="true"]');
-        if (!selected) return;
-        const url = selected.dataset.pdf;
-        if (url === GLASS_MANUAL){
-          loadPdf(url);
-        }
-      }, 200);
-    });
   </script>
 </body>
 </html>
