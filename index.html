@@ -15,10 +15,21 @@
       --page-gap: 18px;
       --bg: #ffffff;
       --page-bg: #ffffff;
+
       --text: #111;
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
+
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+      /* ===== DARK HEADER + MENU THEME ===== */
+      --top-bg: #000000;
+      --top-text: #ffffff;
+      --top-muted: rgba(255,255,255,0.78);
+      --top-border: rgba(255,255,255,0.16);
+      --hamburger: rgba(255,255,255,0.92);
+      --overlay-bg: #000000;
+      --overlay-text: #ffffff;
     }
 
     body{
@@ -41,9 +52,10 @@
       gap: 16px;
 
       padding: 12px 14px;
-      background: rgba(255,255,255,0.88);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
+
+      background: var(--top-bg);
+      border-bottom: 1px solid var(--top-border);
+      backdrop-filter: none;
     }
 
     header,
@@ -56,7 +68,6 @@
       transform: translateY(-120%);
     }
 
-    /* Left cluster: Brand + divider + Download */
     .left{
       display:flex;
       align-items:baseline;
@@ -75,18 +86,19 @@
     .brand .title{
       font-weight:700;
       font-size:16px;
-      letter-spacing: 2px; /* noticeable kerning */
+      letter-spacing: 2px;
+      color: var(--top-text);
     }
     .brand .sub{
       font-size:12px;
-      color: var(--muted);
       font-weight: 400;
+      color: var(--top-muted);
     }
 
     .divider{
       width:1px;
       height:18px;
-      background: rgba(0,0,0,0.18);
+      background: rgba(255,255,255,0.28);
       align-self:center;
       flex: 0 0 auto;
     }
@@ -103,21 +115,20 @@
       white-space:nowrap;
       cursor:pointer;
 
-      color: var(--text) !important;
-      -webkit-text-fill-color: var(--text);
+      color: var(--top-text) !important;
+      -webkit-text-fill-color: var(--top-text);
       font-family: var(--font);
     }
     .download:visited,
     .download:hover,
     .download:active,
     .download:focus{
-      color: var(--text) !important;
-      -webkit-text-fill-color: var(--text);
+      color: var(--top-text) !important;
+      -webkit-text-fill-color: var(--top-text);
       text-decoration: underline;
       outline: none;
     }
 
-    /* Right: menu button (NO circle) */
     .right{
       display:flex;
       align-items:center;
@@ -138,7 +149,7 @@
       cursor:pointer;
       padding:0;
     }
-    .menuBtn:hover{ opacity: 0.7; }
+    .menuBtn:hover{ opacity: 0.8; }
 
     .menuIcon{
       position: relative;
@@ -150,7 +161,7 @@
       left:0;
       right:0;
       height:2px;
-      background: rgba(0,0,0,0.75);
+      background: var(--hamburger); /* white hamburger */
       border-radius: 2px;
       transition: transform 160ms ease, top 160ms ease, opacity 160ms ease;
     }
@@ -162,15 +173,16 @@
     body.menu-open .menuIcon span:nth-child(2){ opacity: 0; }
     body.menu-open .menuIcon span:nth-child(3){ top: 7px; transform: rotate(-45deg); }
 
-    /* ================= FULLSCREEN OVERLAY (BIG MENU) ================= */
+    /* ================= FULLSCREEN OVERLAY (MENU) ================= */
 
     .overlay{
       position: fixed;
       inset: 0;
       z-index: 999;
       display:none;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(14px);
+
+      background: var(--overlay-bg);   /* black */
+      backdrop-filter: none;           /* opaque */
     }
     body.menu-open .overlay{ display:block; }
 
@@ -201,9 +213,9 @@
       padding: 0;
 
       font-family: var(--font);
-      color: var(--text);
+      color: var(--overlay-text);
 
-      letter-spacing: 3px; /* GUARANTEED-visible menu spacing */
+      letter-spacing: 3px;
     }
 
     .menuItemTitle{
@@ -211,6 +223,7 @@
       font-size: clamp(52px, 7.5vw, 96px);
       line-height: 1.02;
       letter-spacing: 3px;
+      color: var(--overlay-text);
     }
 
     .menuItem:hover .menuItemTitle{
@@ -286,7 +299,6 @@
       100%{ background-position: -200% 0; }
     }
 
-    /* ================= MOBILE ================= */
     @media (max-width: 640px){
       .brand .title{ font-size: 15px; }
       .download{ font-size: 12px; }
@@ -304,12 +316,6 @@
       .menuItem{
         letter-spacing: 3px;
       }
-
-      /* ✅ Make the menu background fully opaque on mobile */
-      .overlay{
-        background: #ffffff;       /* fully opaque */
-        backdrop-filter: none;     /* remove blur that looks transparent */
-      }
     }
   </style>
 </head>
@@ -324,7 +330,7 @@
 
       <div class="divider" aria-hidden="true"></div>
 
-      <a id="downloadBtn" class="download" href="resume.pdf" download>Download </a>
+      <a id="downloadBtn" class="download" href="resume.pdf" download>Download PDF</a>
     </div>
 
     <div class="right">
@@ -562,5 +568,3 @@
   </script>
 </body>
 </html>
-
-
