@@ -28,6 +28,11 @@
       font-family: var(--font);
     }
 
+    /* Lock page scroll when menu is open (prevents giant scrollbars) */
+    body.menu-open{
+      overflow: hidden;
+    }
+
     /* ================= HEADER ================= */
 
     header{
@@ -182,8 +187,7 @@
       backdrop-filter: none;
       opacity: 1;
 
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      overflow: hidden; /* important: prevents horizontal/vertical scrollbars */
     }
     body.menu-open .overlay{ display:block; }
 
@@ -203,6 +207,9 @@
       display:flex;
       flex-direction:column;
       gap: 28px;
+
+      height: 100vh;      /* full screen */
+      overflow: hidden;   /* keeps artwork crop inside overlay */
     }
 
     .menuItem{
@@ -216,6 +223,7 @@
       color: #fff;
       display:inline-block;
       width: 100%;
+      z-index: 2;         /* ensure clicks stay above art */
     }
 
     .menuItemTitle{
@@ -227,6 +235,7 @@
       transition: transform 160ms ease, font-weight 160ms ease, opacity 160ms ease;
     }
 
+    /* “Scale + weight pop” (no underline) */
     .menuItem:hover .menuItemTitle{
       transform: scale(1.04);
       opacity: 0.98;
@@ -238,38 +247,35 @@
       opacity: 1;
     }
 
-    /* ================= ARTWORK (DESKTOP: FULL-WIDTH, SLIGHT BOTTOM CROP) ================= */
+    /* ================= ARTWORK (FULL SCREEN, NO SCROLL, CUTS BOTTOM SLIGHTLY) ================= */
 
+    /* Artwork is now pinned to the bottom of the overlay.
+       Put the file in the SAME folder as index.html: menu-art.png */
     .menuArtArea{
-      width: 100vw;
-      margin-left: calc(50% - 50vw);
-      margin-top: 6px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
 
-      /* keep a consistent area, but allow the image to overflow */
-      height: 56vh;
-      overflow: visible;
-      position: relative;
+      height: 60vh;          /* “art zone” height */
       pointer-events: none;
+      overflow: hidden;      /* crops bottom/edges cleanly */
+      z-index: 1;
     }
 
     .menuArt{
       position: absolute;
       left: 50%;
-
-      /* anchor to bottom so it crops at bottom slightly */
-      bottom: -5px; /* increase (more negative) = more bottom cut */
-
+      top: 0;                /* keep TOP of the artwork visible */
       transform: translateX(-50%);
 
-      /* make it super wide so it spans the whole screen */
-      width: 200vw;
-      height: 80vh;
-
-      /* cover ensures it fills the width */
+      width: 200vw;          /* span the full screen (wider than viewport) */
+      height: 82vh;          /* tall enough to spill down */
       object-fit: cover;
-
-      /* keep top visible (stars etc) while still cropping bottom */
       object-position: top center;
+
+      /* This is the "cut off at bottom slightly" knob */
+      margin-bottom: -60px;  /* increase magnitude for more bottom cut */
 
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
@@ -300,6 +306,7 @@
       transition: width 180ms ease;
     }
 
+    /* ================= SPACER ================= */
     #topSpacer{ height: 18px; }
 
     /* ================= PDF VIEWER ================= */
@@ -339,7 +346,7 @@
       100%{ background-position: -200% 0; }
     }
 
-    /* ================= MOBILE ================= */
+    /* Mobile tweaks */
     @media (max-width: 640px){
       .brand .title{ font-size: 15px; }
       .download{ font-size: 12px; }
@@ -354,25 +361,12 @@
         font-size: clamp(44px, 10vw, 72px);
       }
 
-      .menuArtArea{
-        height: 62vh;
-        margin-top: 8px;
-      }
-
+      /* Mobile art: slightly smaller & a bit less “bottom cut” */
+      .menuArtArea{ height: 58vh; }
       .menuArt{
-        /* keep your mobile sizing */
-        width: 130vw;
-        height: 90vh;
-
-        /* scoot UP on mobile */
-        top: -90px;
-        bottom: auto;
-
-        object-fit: cover;
-        object-position: top center;
-
-        /* keep your mobile nudge-right */
-        transform: translateX(calc(-50% + 24px));
+        width: 170vw;
+        height: 72vh;
+        margin-bottom: -40px;
       }
     }
   </style>
@@ -388,6 +382,7 @@
 
       <div class="divider" aria-hidden="true"></div>
 
+      <!-- Starts as Glass Manual now -->
       <a id="downloadBtn" class="download" href="glass-construction-manual.pdf" download>Download PDF</a>
     </div>
 
@@ -400,6 +395,7 @@
     </div>
   </header>
 
+  <!-- Full-screen overlay menu -->
   <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Document menu">
     <div class="overlayBackdrop" aria-hidden="true"></div>
 
@@ -412,10 +408,12 @@
         <div class="menuItemTitle">Portfolio</div>
       </button>
 
+      <!-- Default selection is Glass Manual -->
       <button class="menuItem" aria-selected="true" data-pdf="glass-construction-manual.pdf">
         <div class="menuItemTitle">Glass Manual</div>
       </button>
 
+      <!-- Artwork (pinned to bottom, no scrolling) -->
       <div class="menuArtArea" aria-hidden="true">
         <img class="menuArt" src="menu-art.png" alt="">
       </div>
@@ -554,6 +552,8 @@
       }
     }
 
+    /* ================= MENU OPEN/CLOSE ================= */
+
     function openMenu(){
       document.body.classList.add("menu-open");
       menuBtn.setAttribute("aria-expanded", "true");
@@ -588,6 +588,8 @@
       });
     });
 
+    /* ================= INITIAL LOAD (Glass Manual) ================= */
+
     const startItem =
       document.querySelector('.menuItem[aria-selected="true"]') ||
       menuItems.find(b => b.dataset.pdf === "glass-construction-manual.pdf") ||
@@ -596,6 +598,7 @@
     setActiveItem(startItem);
     loadPdf(startItem.dataset.pdf);
 
+    /* ================= HIDE HEADER ON SCROLL DOWN / SHOW ON SCROLL UP ================= */
     let lastY = window.scrollY;
     let ticking = false;
 
@@ -635,4 +638,3 @@
   </script>
 </body>
 </html>
-
