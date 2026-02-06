@@ -22,14 +22,16 @@
 
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 
-      /* ===== LIGHT PINK HEADER + MENU THEME ===== */
+      /* ===== HEADER: LIGHT PINK + BLACK TEXT ===== */
       --top-bg: #F7B7C8;                 /* light pink */
-      --top-text: #ffffff;               /* white text */
-      --top-muted: rgba(255,255,255,0.88);
-      --top-border: rgba(255,255,255,0.35);
-      --hamburger: rgba(255,255,255,0.95);
+      --top-text: #111111;               /* black */
+      --top-muted: rgba(0,0,0,0.65);
+      --top-border: rgba(0,0,0,0.12);
 
-      --overlay-bg: #F7B7C8;             /* light pink menu */
+      --hamburger: rgba(0,0,0,0.85);     /* black hamburger */
+
+      /* ===== MENU OVERLAY: BLACK + WHITE TEXT ===== */
+      --overlay-bg: #000000;             /* black menu background */
       --overlay-text: #ffffff;           /* white menu text */
     }
 
@@ -99,7 +101,7 @@
     .divider{
       width:1px;
       height:18px;
-      background: rgba(255,255,255,0.55);
+      background: rgba(0,0,0,0.22);
       align-self:center;
       flex: 0 0 auto;
     }
@@ -162,7 +164,7 @@
       left:0;
       right:0;
       height:2px;
-      background: var(--hamburger);
+      background: var(--hamburger); /* black hamburger */
       border-radius: 2px;
       transition: transform 160ms ease, top 160ms ease, opacity 160ms ease;
     }
@@ -181,7 +183,7 @@
       inset: 0;
       z-index: 999;
       display:none;
-      background: var(--overlay-bg); /* light pink */
+      background: var(--overlay-bg); /* black */
       backdrop-filter: none;         /* opaque */
     }
     body.menu-open .overlay{ display:block; }
