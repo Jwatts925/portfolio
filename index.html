@@ -178,8 +178,8 @@
       z-index: 999;
       display:none;
 
-      background: #000;          /* black menu */
-      backdrop-filter: none;     /* ensure opaque */
+      background: #000;
+      backdrop-filter: none;
       opacity: 1;
     }
     body.menu-open .overlay{ display:block; }
@@ -196,7 +196,7 @@
       width: min(1400px, 92vw);
       margin: 0 auto;
 
-      padding: 90px 0 0; /* leave room for top */
+      padding: 90px 0 0;
       display:flex;
       flex-direction:column;
       gap: 28px;
@@ -219,7 +219,7 @@
       font-weight: 700;
       font-size: clamp(52px, 7.5vw, 96px);
       line-height: 1.02;
-      letter-spacing: 0; /* keep as-is */
+      letter-spacing: 0;
       transform-origin: left center;
       transition: transform 160ms ease, font-weight 160ms ease, opacity 160ms ease;
     }
@@ -245,28 +245,26 @@
       margin-left: calc(50% - 50vw);
       margin-top: 18px;
 
-      height: 62vh;       /* tall section */
-      overflow: visible;  /* allow spill */
+      height: 62vh;
+      overflow: visible;
       position: relative;
-      pointer-events: none; /* art never blocks clicks */
+      pointer-events: none;
     }
 
     .menuArt{
       position: absolute;
       left: 50%;
-      top: 0;                      /* keep TOP visible */
+      top: 0;
       transform: translateX(-50%);
 
-      width: 120vw;                /* full bleed */
-      height: 85vh;                /* bottom spills past view */
-      object-fit: cover;           /* fill width proportionally */
-      object-position: top center; /* top not cut */
+      width: 120vw;
+      height: 85vh;
+      object-fit: cover;
+      object-position: top center;
 
-      /* If your art is black lines on transparent, this makes lines white */
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
 
-      /* NO fades */
       -webkit-mask-image: none !important;
       mask-image: none !important;
     }
@@ -348,11 +346,11 @@
         font-size: clamp(44px, 10vw, 72px);
       }
 
-      /* More “full screen” art on mobile */
-      .menuArtArea{ height: 70vh; }
+      /* Slightly smaller artwork on mobile (same effect: top visible, bottom spills) */
+      .menuArtArea{ height: 64vh; }     /* was 70vh-ish earlier */
       .menuArt{
-        width: 140vw;
-        height: 95vh;
+        width: 130vw;                   /* was 140vw */
+        height: 88vh;                   /* was 95vh */
       }
     }
   </style>
@@ -368,7 +366,8 @@
 
       <div class="divider" aria-hidden="true"></div>
 
-      <a id="downloadBtn" class="download" href="resume.pdf" download>Download PDF</a>
+      <!-- Starts as Glass Manual now -->
+      <a id="downloadBtn" class="download" href="glass-construction-manual.pdf" download>Download PDF</a>
     </div>
 
     <div class="right">
@@ -385,7 +384,7 @@
     <div class="overlayBackdrop" aria-hidden="true"></div>
 
     <div class="overlayMenu" aria-label="Document tabs">
-      <button class="menuItem" aria-selected="true" data-pdf="resume.pdf">
+      <button class="menuItem" aria-selected="false" data-pdf="resume.pdf">
         <div class="menuItemTitle">Resume</div>
       </button>
 
@@ -393,11 +392,12 @@
         <div class="menuItemTitle">Portfolio</div>
       </button>
 
-      <button class="menuItem" aria-selected="false" data-pdf="glass-construction-manual.pdf">
+      <!-- Default selection is Glass Manual -->
+      <button class="menuItem" aria-selected="true" data-pdf="glass-construction-manual.pdf">
         <div class="menuItemTitle">Glass Manual</div>
       </button>
 
-      <!-- Artwork: put your image in the repo root and name it menu-art.png -->
+      <!-- Artwork -->
       <div class="menuArtArea" aria-hidden="true">
         <img class="menuArt" src="menu-art.png" alt="">
       </div>
@@ -572,9 +572,13 @@
       });
     });
 
-    /* ================= INITIAL LOAD ================= */
+    /* ================= INITIAL LOAD (Glass Manual) ================= */
 
-    const startItem = document.querySelector('.menuItem[aria-selected="true"]') || menuItems[0];
+    const startItem =
+      document.querySelector('.menuItem[aria-selected="true"]') ||
+      menuItems.find(b => b.dataset.pdf === "glass-construction-manual.pdf") ||
+      menuItems[0];
+
     setActiveItem(startItem);
     loadPdf(startItem.dataset.pdf);
 
