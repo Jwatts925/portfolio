@@ -19,6 +19,12 @@
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+      /* If your artwork is BLACK lines on transparent, keep this ON (default). */
+      --art-filter: brightness(0) invert(1);
+
+      /* If your artwork is ALREADY WHITE lines on transparent, set this to "none". */
+      /* --art-filter: none; */
     }
 
     body{
@@ -63,7 +69,6 @@
       transform: translateY(-120%);
     }
 
-    /* Left cluster: Brand + divider + Download */
     .left{
       display:flex;
       align-items:baseline;
@@ -124,7 +129,6 @@
       outline: none;
     }
 
-    /* Right: menu button (NO circle) */
     .right{
       display:flex;
       align-items:center;
@@ -185,10 +189,8 @@
       z-index: 999;
       display:none;
 
-      background: #000;          /* black menu */
+      background: #000;
       opacity: 1;
-
-      /* extra lock safety */
       overflow: hidden;
     }
     body.menu-open .overlay{ display:block; }
@@ -223,14 +225,13 @@
       display:inline-block;
       width: 100%;
       position: relative;
-      z-index: 2; /* keep text above art */
+      z-index: 2;
     }
 
     .menuItemTitle{
       font-weight: 700;
       font-size: clamp(52px, 7.5vw, 96px);
       line-height: 1.02;
-      letter-spacing: 0;
       transform-origin: left center;
       transition: transform 160ms ease, font-weight 160ms ease, opacity 160ms ease;
     }
@@ -238,29 +239,22 @@
     .menuItem:hover .menuItemTitle{
       transform: scale(1.04);
       opacity: 0.98;
-      font-weight: 700;
     }
     .menuItem[aria-selected="true"] .menuItemTitle{
       transform: scale(1.06);
-      font-weight: 700;
       opacity: 1;
     }
 
-    /* ================= ARTWORK =================
-       Goal:
-       - NO crop at the top of the artwork (show top of image)
-       - Bleed off left/right/bottom
-       - On very tall screens, keep it from rising into the menu text
-    */
+    /* ================= ARTWORK (NO TOP CROP, BLEED L/R/BOTTOM, NO OVERLAP) ================= */
 
     .menuArtArea{
       width: 100vw;
       margin-left: calc(50% - 50vw);
 
-      /* This spacing is the key: taller screens get more gap so art doesn't invade text */
+      /* Key: on large/tall screens, this pushes art down so it doesn't invade text */
       margin-top: clamp(18px, 6vh, 140px);
 
-      /* Give the art a "zone" so it starts below text */
+      /* The "zone" the art lives in */
       height: clamp(34vh, 40vh, 52vh);
 
       position: relative;
@@ -268,28 +262,45 @@
       z-index: 1;
     }
 
+    /* DEBUG BOX (shows ONLY if image fails to load) */
+    .menuArtMissing{
+      display:none;
+      width: 100%;
+      height: 100%;
+      border: 2px dashed rgba(255,255,255,0.35);
+      border-radius: 16px;
+      color: rgba(255,255,255,0.65);
+      font: 600 14px/1.2 var(--font);
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.4px;
+    }
+    .menuArtArea.missing .menuArtMissing{ display:flex; }
+
     .menuArt{
       position: absolute;
       left: 50%;
 
-      /* Anchor to bottom so it bleeds DOWN (and won't climb up as badly) */
-      bottom: -10vh; /* adjust if you want more/less bottom cut */
+      /* Bleed down (slight crop at bottom), but do NOT rise into the text */
+      bottom: -10vh;
 
-      /* centered */
       transform: translateX(-50%);
 
-      /* make it wider than screen so it bleeds left/right */
+      /* bleed left/right */
       width: 160vw;
 
-      /* big enough to spill below, but capped so it doesn't dominate tall screens */
+      /* big enough to spill down, but capped */
       height: clamp(55vh, 75vh, 85vh);
 
-      object-fit: contain;        /* IMPORTANT: avoids cropping the top */
-      object-position: top center;/* top stays as-is */
+      /* IMPORTANT: no top cropping */
+      object-fit: contain;
+      object-position: top center;
 
-      /* If your file is already WHITE lines on transparent, keep this OFF */
-      filter: none;
-      -webkit-filter: none;
+      filter: var(--art-filter);
+      -webkit-filter: var(--art-filter);
+
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
     }
 
     /* ================= LOADING BAR ================= */
@@ -314,7 +325,6 @@
       transition: width 180ms ease;
     }
 
-    /* ================= SPACER ================= */
     #topSpacer{ height: 18px; }
 
     /* ================= PDF VIEWER ================= */
@@ -369,15 +379,15 @@
         font-size: clamp(44px, 10vw, 72px);
       }
 
-      /* Mobile: scoot art UP a bit, keep it smaller, still bleeding */
+      /* Mobile: scoot art UP and keep it from dropping too low */
       .menuArtArea{
-        margin-top: 18px;   /* tighter like your “tabs start” look */
-        height: 46vh;       /* smaller zone so it doesn't fall too low */
+        margin-top: 18px;
+        height: 46vh;
       }
       .menuArt{
-        bottom: 10vh;       /* less downward push than desktop */
-        width: 165vw;       /* still wide */
-        height: 72vh;       /* slightly smaller */
+        bottom: -6vh;
+        width: 165vw;
+        height: 72vh;
       }
     }
   </style>
@@ -406,7 +416,6 @@
     </div>
   </header>
 
-  <!-- Full-screen overlay menu -->
   <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Document menu">
     <div class="overlayBackdrop" aria-hidden="true"></div>
 
@@ -423,9 +432,9 @@
         <div class="menuItemTitle">Glass Manual</div>
       </button>
 
-      <!-- Artwork -->
-      <div class="menuArtArea" aria-hidden="true">
-        <img class="menuArt" src="menu-art.png" alt="">
+      <div id="menuArtArea" class="menuArtArea" aria-hidden="true">
+        <div class="menuArtMissing">IMAGE NOT FOUND: menu-art.png</div>
+        <img id="menuArt" class="menuArt" src="menu-art.png" alt="">
       </div>
     </div>
   </div>
@@ -449,6 +458,14 @@
     const overlay = document.getElementById("overlay");
     const backdrop = overlay.querySelector(".overlayBackdrop");
     const menuItems = Array.from(document.querySelectorAll(".menuItem"));
+
+    // Debug helper: show fallback if menu-art.png fails to load
+    const menuArt = document.getElementById("menuArt");
+    const menuArtArea = document.getElementById("menuArtArea");
+    menuArt.addEventListener("error", () => {
+      menuArtArea.classList.add("missing");
+      console.warn("menu-art.png failed to load. Check filename + location.");
+    });
 
     let observer = null;
     let loadToken = 0;
@@ -562,8 +579,6 @@
       }
     }
 
-    /* ================= MENU OPEN/CLOSE ================= */
-
     function openMenu(){
       document.body.classList.add("menu-open");
       menuBtn.setAttribute("aria-expanded", "true");
@@ -598,8 +613,7 @@
       });
     });
 
-    /* ================= INITIAL LOAD (Glass Manual) ================= */
-
+    // Initial load (Glass Manual)
     const startItem =
       document.querySelector('.menuItem[aria-selected="true"]') ||
       menuItems.find(b => b.dataset.pdf === "glass-construction-manual.pdf") ||
@@ -608,7 +622,7 @@
     setActiveItem(startItem);
     loadPdf(startItem.dataset.pdf);
 
-    /* ================= HIDE HEADER ON SCROLL DOWN / SHOW ON SCROLL UP ================= */
+    // Hide header on scroll down / show on scroll up (disabled while menu open)
     let lastY = window.scrollY;
     let ticking = false;
 
