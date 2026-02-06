@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>James Watts’ Portfolio</title>
+  <title>James Watts</title>
 
   <style>
     :root{
@@ -13,7 +13,6 @@
       --text: #111;
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
-      --shadow: 0 6px 18px rgba(0,0,0,0.12);
     }
 
     body{
@@ -39,7 +38,7 @@
       background: rgba(255,255,255,0.88);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
-      flex-wrap: wrap; /* allows graceful wrap on smaller desktop widths */
+      flex-wrap: wrap;
     }
 
     /* Hide/show of the sticky top bar */
@@ -75,8 +74,9 @@
     .controls{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:10px;
       flex-wrap:nowrap;
+      justify-content:center;
     }
 
     .tabs{
@@ -84,7 +84,7 @@
       gap:8px;
       align-items:center;
       justify-content:center;
-      flex-wrap:wrap; /* desktop can wrap if needed */
+      flex-wrap:wrap;
     }
 
     .tab{
@@ -100,30 +100,37 @@
       user-select:none;
       white-space:nowrap;
     }
-    .tab:hover{ border-color: rgba(0,0,0,0.18); box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .tab:hover{
+      border-color: rgba(0,0,0,0.18);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
     .tab[aria-selected="true"]{
       border-color: rgba(0,0,0,0.22);
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       font-weight: 600;
     }
 
+    /* Thin divider between Glass Manual and Download PDF (desktop + mobile) */
     .divider{
       width:1px;
-      height:28px;
-      background: rgba(0,0,0,0.15);
+      height:22px;
+      background: rgba(0,0,0,0.18);
       align-self:center;
+      flex: 0 0 auto;
     }
 
-    /* Download button (force no blue on mobile/visited/etc.) */
+    /* Download link: NOT a button, just bold text */
     .download{
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:999px;
-      padding:8px 14px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+
       font-size:13px;
-      cursor:pointer;
+      font-weight:700; /* bold */
       text-decoration:none;
       white-space:nowrap;
+      cursor:pointer;
 
       color: var(--text) !important;
       -webkit-text-fill-color: var(--text);
@@ -134,11 +141,8 @@
     .download:focus{
       color: var(--text) !important;
       -webkit-text-fill-color: var(--text);
-      text-decoration:none;
-    }
-    .download:hover{
-      border-color: rgba(0,0,0,0.18);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      text-decoration: underline; /* subtle affordance */
+      outline: none;
     }
 
     /* ================= LOADING BAR ================= */
@@ -169,7 +173,10 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      padding: 18px 10px 60px;
+
+      /* ✅ more buffer below the header / loading bar */
+      padding: 34px 10px 60px;
+
       gap: var(--page-gap);
     }
 
@@ -201,9 +208,7 @@
       100%{ background-position: -200% 0; }
     }
 
-    /* ================= MOBILE ONLY =================
-       Brand on its own row, controls in one line, and download not blue.
-    */
+    /* ================= MOBILE ONLY ================= */
     @media (max-width: 640px){
       header{
         flex-direction: column;
@@ -211,15 +216,17 @@
         gap: 8px;
       }
 
+      /* ✅ On mobile: name + years on ONE ROW */
       .brand{
-        flex-direction: column;
-        align-items: center;
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: center;
         text-align: center;
-        gap: 2px;
-        white-space: normal;
+        gap: 8px;
+        white-space: nowrap;
       }
 
-      /* Force the controls into ONE line */
+      /* Force controls into one line */
       .controls{
         width: 100%;
         justify-content: center;
@@ -232,21 +239,30 @@
         gap: 6px;
       }
 
-      /* Smaller pills so Download fits inline */
-      .tab,
-      .download{
+      /* Make tabs slightly smaller so Download stays inline */
+      .tab{
         font-size: 11px;
         padding: 6px 8px;
       }
 
-      /* Hide divider to save width so Download fits */
-      .divider{
-        display:none;
+      .download{
+        font-size: 11px;
       }
 
-      /* Loading bar needs to move down (taller header on mobile) */
+      /* ✅ Show divider on mobile too */
+      .divider{
+        display:block;
+        height:18px;
+      }
+
+      /* Loading bar lower on mobile (header is taller) */
       #loadingBar{
-        top: 92px;
+        top: 88px;
+      }
+
+      /* Slightly more breathing room on mobile too */
+      #viewer{
+        padding-top: 30px;
       }
     }
   </style>
@@ -255,7 +271,7 @@
 <body>
   <header>
     <div class="brand">
-      <div class="title">James Watts’ Portfolio</div>
+      <div class="title">James Watts</div>
       <div class="sub">2021–2026</div>
     </div>
 
@@ -318,7 +334,6 @@
     function setActive(tab){
       tabs.forEach(t => t.setAttribute("aria-selected", t === tab ? "true" : "false"));
       downloadBtn.href = tab.dataset.pdf;
-      downloadBtn.style.color = "var(--text)";
     }
 
     function makeShell(pageNumber){
@@ -448,4 +463,3 @@
   </script>
 </body>
 </html>
-
