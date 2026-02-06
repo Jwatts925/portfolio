@@ -20,8 +20,9 @@
       --border: rgba(0,0,0,0.10);
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 
-      --menu-bg: #000;      /* overlay background */
-      --menu-text: #fff;    /* overlay text */
+      /* Menu theme */
+      --menu-bg: #000;
+      --menu-text: #fff;
     }
 
     body{
@@ -78,7 +79,7 @@
     .brand .title{
       font-weight:700;
       font-size:16px;
-      letter-spacing: 0.4px; /* keep your title kerning */
+      letter-spacing: 0.04em; /* (your kerning tweak for title) */
     }
     .brand .sub{
       font-size:12px;
@@ -183,8 +184,7 @@
       z-index: 999;
       display:none;
 
-      /* OPAQUE (no transparency) */
-      background: var(--menu-bg);
+      background: var(--menu-bg);   /* opaque */
       backdrop-filter: none;
     }
     body.menu-open .overlay{ display:block; }
@@ -196,7 +196,7 @@
 
     .overlayMenu{
       position: relative;
-      z-index: 2;
+      z-index: 1;
 
       width: min(1400px, 92vw);
       margin: 0 auto;
@@ -204,7 +204,7 @@
       padding: 90px 0 0;
       display:flex;
       flex-direction:column;
-      gap: 28px;
+      gap: 26px;
     }
 
     .menuItem{
@@ -223,81 +223,63 @@
       font-weight: 700;
       font-size: clamp(52px, 7.5vw, 96px);
       line-height: 1.02;
-
-      /* kerning / tracking for the menu titles */
-      letter-spacing: 0.06em;
+      letter-spacing: 0.04em; /* (kerning for menu items) */
+      transform: translateY(0) scale(1);
+      transition: transform 140ms ease, opacity 140ms ease;
+      opacity: 0.95;
     }
 
-    /* “Scale + weight” pop (no underline) */
+    /* “Scale + weight pop” instead of underline */
     .menuItem:hover .menuItemTitle{
-      transform: scale(1.03);
-      transform-origin: left center;
-      font-weight: 800;
+      transform: translateY(-2px) scale(1.03);
+      opacity: 1;
     }
-
     .menuItem[aria-selected="true"] .menuItemTitle{
-      transform: scale(1.03);
-      transform-origin: left center;
-      font-weight: 800;
+      transform: translateY(-2px) scale(1.03);
+      opacity: 1;
     }
 
-    /* ================= MENU ART (FULL WIDTH, FADE EDGES/BOTTOM) ================= */
-
+    /* Artwork area below menu text */
     .menuArtArea{
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-
-      height: 48vh;          /* controls how tall the bottom art zone is */
-      z-index: 1;            /* behind menu text */
-      pointer-events: none;
+      position: relative;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-top: 18px;
+      height: 48vh;          /* space reserved for art */
       overflow: hidden;
     }
 
     .menuArtArea img{
       position: absolute;
       left: 50%;
-      bottom: -2vh;          /* tuck slightly off bottom to feel “anchored” */
+      bottom: 0;
       transform: translateX(-50%);
 
-      /* Make it span wide */
+      /* key change: fit instead of crop */
       width: min(1700px, 120vw);
+      max-width: 140vw;
       height: auto;
-      max-height: 60vh;
+
+      /* key change: ensure whole art fits vertically (prevents top cut-off) */
+      max-height: 48vh;
 
       opacity: 0.92;
 
-      /* If your art is dark linework, this makes it white */
+      /* make linework white if the asset is dark */
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
     }
 
-    /* Fade out to left/right */
-    .menuArtArea::before{
-      content:"";
+    /* Soft fade edges (left/right/bottom) */
+    .menuArtFade{
       position:absolute;
       inset:0;
+      pointer-events:none;
       background:
-        linear-gradient(to right,
-          var(--menu-bg) 0%,
-          rgba(0,0,0,0) 18%,
-          rgba(0,0,0,0) 82%,
-          var(--menu-bg) 100%);
-      /* For non-black menu colors later, keep this in sync by using var(--menu-bg) above */
-      pointer-events:none;
-    }
-
-    /* Fade out to bottom */
-    .menuArtArea::after{
-      content:"";
-      position:absolute;
-      left:0; right:0; bottom:0;
-      height: 42%;
-      background: linear-gradient(to bottom,
-        rgba(0,0,0,0) 0%,
-        var(--menu-bg) 100%);
-      pointer-events:none;
+        radial-gradient(110% 85% at 50% 100%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%),
+        linear-gradient(to left, rgba(0,0,0,0.95), rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.95)),
+        linear-gradient(to bottom, rgba(0,0,0,0) 35%, rgba(0,0,0,0.95) 100%);
+      mix-blend-mode: normal;
     }
 
     /* ================= LOADING BAR ================= */
@@ -370,12 +352,12 @@
 
       .overlayMenu{
         padding-top: 72px;
-        gap: 22px;
+        gap: 20px;
       }
 
       .menuItemTitle{
         font-size: clamp(44px, 10vw, 72px);
-        letter-spacing: 0.06em;
+        letter-spacing: 0.04em;
       }
 
       .menuArtArea{
@@ -383,8 +365,8 @@
       }
 
       .menuArtArea img{
-        width: 140vw;      /* a little wider on mobile */
-        max-height: 58vh;
+        width: 140vw;
+        max-height: 52vh;   /* <= prevents top cutoff on phones too */
       }
     }
   </style>
@@ -417,7 +399,7 @@
     <div class="overlayBackdrop" aria-hidden="true"></div>
 
     <div class="overlayMenu" aria-label="Document tabs">
-      <button class="menuItem" aria-selected="false" data-pdf="resume.pdf">
+      <button class="menuItem" aria-selected="true" data-pdf="resume.pdf">
         <div class="menuItemTitle">Resume</div>
       </button>
 
@@ -425,15 +407,16 @@
         <div class="menuItemTitle">Portfolio</div>
       </button>
 
-      <button class="menuItem" aria-selected="true" data-pdf="glass-construction-manual.pdf">
+      <button class="menuItem" aria-selected="false" data-pdf="glass-construction-manual.pdf">
         <div class="menuItemTitle">Glass Manual</div>
       </button>
-    </div>
 
-    <!-- Artwork goes behind the menu, bottom of screen -->
-    <!-- Put your file in the same folder as index.html and name it: menu-art.png -->
-    <div class="menuArtArea" aria-hidden="true">
-      <img src="menu-art.png" alt="">
+      <!-- Artwork (put your file in the same repo folder as index.html) -->
+      <!-- Name your file: menu-art.png (or menu-art.svg / menu-art.jpg) -->
+      <div class="menuArtArea" aria-hidden="true">
+        <img src="menu-art.png" alt="">
+        <div class="menuArtFade"></div>
+      </div>
     </div>
   </div>
 
