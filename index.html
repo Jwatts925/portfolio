@@ -113,13 +113,13 @@
     /* Thin divider between Glass Manual and Download PDF (desktop + mobile) */
     .divider{
       width:1px;
-      height:22px;
+      height:18px;
       background: rgba(0,0,0,0.18);
       align-self:center;
       flex: 0 0 auto;
     }
 
-    /* Download link: NOT a button, just bold text */
+    /* Download link: bold text (not a pill button) */
     .download{
       background: transparent;
       border: none;
@@ -127,7 +127,7 @@
       margin: 0;
 
       font-size:13px;
-      font-weight:700; /* bold */
+      font-weight:700;
       text-decoration:none;
       white-space:nowrap;
       cursor:pointer;
@@ -141,7 +141,7 @@
     .download:focus{
       color: var(--text) !important;
       -webkit-text-fill-color: var(--text);
-      text-decoration: underline; /* subtle affordance */
+      text-decoration: underline;
       outline: none;
     }
 
@@ -167,6 +167,14 @@
       transition: width 180ms ease;
     }
 
+    /* ================= SPACER (NEW) =================
+       Consistent breathing room between sticky header/loading bar and pages.
+       Because it's its own element, it behaves predictably even when the header hides/shows.
+    */
+    #topSpacer{
+      height: 18px; /* desktop spacing */
+    }
+
     /* ================= PDF VIEWER ================= */
 
     #viewer{
@@ -174,13 +182,13 @@
       flex-direction:column;
       align-items:center;
 
-      /* ✅ more buffer below the header / loading bar */
-      padding: 34px 10px 60px;
+      /* Padding is now mostly for sides/bottom; top handled by #topSpacer */
+      padding: 0 10px 60px;
 
       gap: var(--page-gap);
     }
 
-    /* ✅ Your requested page styling (applies to desktop + mobile) */
+    /* ✅ Page styling (applies to desktop + mobile) */
     .page{
       width: min(1100px, 96vw);
       background: var(--page-bg);
@@ -249,7 +257,7 @@
         font-size: 11px;
       }
 
-      /* ✅ Show divider on mobile too */
+      /* Divider shown on mobile too */
       .divider{
         display:block;
         height:18px;
@@ -260,9 +268,9 @@
         top: 88px;
       }
 
-      /* Slightly more breathing room on mobile too */
-      #viewer{
-        padding-top: 30px;
+      /* Slightly different spacer height on mobile */
+      #topSpacer{
+        height: 14px;
       }
     }
   </style>
@@ -289,6 +297,9 @@
   </header>
 
   <div id="loadingBar" aria-hidden="true"><div id="loadingBarInner"></div></div>
+
+  <!-- ✅ NEW: consistent breathing room below the sticky header/loading bar -->
+  <div id="topSpacer" aria-hidden="true"></div>
 
   <main id="viewer"></main>
 
