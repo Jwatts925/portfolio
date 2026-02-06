@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>James Watts</title>
 
+  <!-- Font: Roboto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
     :root{
       --page-gap: 18px;
@@ -13,13 +18,15 @@
       --text: #111;
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
+
+      --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     }
 
     body{
       margin:0;
       background:var(--bg);
       color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      font-family: var(--font);
     }
 
     /* ================= HEADER (DESKTOP DEFAULT) ================= */
@@ -61,13 +68,14 @@
       white-space: nowrap;
     }
     .brand .title{
-      font-weight:600;
+      font-weight:700;
       font-size:16px;
       letter-spacing: 0.2px;
     }
     .brand .sub{
       font-size:12px;
       color: var(--muted);
+      font-weight: 400;
     }
 
     /* Controls row: tabs + divider + download */
@@ -99,6 +107,8 @@
       line-height:1;
       user-select:none;
       white-space:nowrap;
+      font-family: var(--font);
+      font-weight: 400;
     }
     .tab:hover{
       border-color: rgba(0,0,0,0.18);
@@ -107,7 +117,7 @@
     .tab[aria-selected="true"]{
       border-color: rgba(0,0,0,0.22);
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     /* Thin divider between Glass Manual and Download PDF (desktop + mobile) */
@@ -134,6 +144,7 @@
 
       color: var(--text) !important;
       -webkit-text-fill-color: var(--text);
+      font-family: var(--font);
     }
     .download:visited,
     .download:hover,
@@ -167,10 +178,7 @@
       transition: width 180ms ease;
     }
 
-    /* ================= SPACER (NEW) =================
-       Consistent breathing room between sticky header/loading bar and pages.
-       Because it's its own element, it behaves predictably even when the header hides/shows.
-    */
+    /* ================= SPACER ================= */
     #topSpacer{
       height: 18px; /* desktop spacing */
     }
@@ -181,14 +189,10 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-
-      /* Padding is now mostly for sides/bottom; top handled by #topSpacer */
       padding: 0 10px 60px;
-
       gap: var(--page-gap);
     }
 
-    /* ✅ Page styling (applies to desktop + mobile) */
     .page{
       width: min(1100px, 96vw);
       background: var(--page-bg);
@@ -224,7 +228,7 @@
         gap: 8px;
       }
 
-      /* ✅ On mobile: name + years on ONE ROW */
+      /* On mobile: name + years on ONE ROW */
       .brand{
         flex-direction: row;
         align-items: baseline;
@@ -257,18 +261,15 @@
         font-size: 11px;
       }
 
-      /* Divider shown on mobile too */
       .divider{
         display:block;
         height:18px;
       }
 
-      /* Loading bar lower on mobile (header is taller) */
       #loadingBar{
         top: 88px;
       }
 
-      /* Slightly different spacer height on mobile */
       #topSpacer{
         height: 14px;
       }
@@ -297,8 +298,6 @@
   </header>
 
   <div id="loadingBar" aria-hidden="true"><div id="loadingBarInner"></div></div>
-
-  <!-- ✅ NEW: consistent breathing room below the sticky header/loading bar -->
   <div id="topSpacer" aria-hidden="true"></div>
 
   <main id="viewer"></main>
