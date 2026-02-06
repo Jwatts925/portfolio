@@ -15,20 +15,10 @@
       --page-gap: 18px;
       --bg: #ffffff;
       --page-bg: #ffffff;
-
       --text: #111;
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
-
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-
-      --menu-bg: #EE6055;
-      --menu-text: #ffffff;
-
-      --header-bg: #EE6055;
-      --header-text: #ffffff;
-      --header-divider: rgba(255,255,255,0.45);
-      --header-border: rgba(255,255,255,0.20);
     }
 
     body{
@@ -51,8 +41,9 @@
       gap: 16px;
 
       padding: 12px 14px;
-      background: var(--header-bg);
-      border-bottom: 1px solid var(--header-border);
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
     }
 
     header,
@@ -80,29 +71,26 @@
       gap:10px;
       white-space: nowrap;
       min-width: 0;
-      color: var(--header-text);
     }
     .brand .title{
       font-weight:700;
       font-size:16px;
       letter-spacing: 0.2px;
-      color: var(--header-text);
     }
     .brand .sub{
       font-size:12px;
-      color: rgba(255,255,255,0.85);
+      color: var(--muted);
       font-weight: 400;
     }
 
     .divider{
       width:1px;
       height:18px;
-      background: var(--header-divider);
+      background: rgba(0,0,0,0.18);
       align-self:center;
       flex: 0 0 auto;
     }
 
-    /* Download link: bold text (white) */
     .download{
       background: transparent;
       border: none;
@@ -115,16 +103,16 @@
       white-space:nowrap;
       cursor:pointer;
 
-      color: var(--header-text) !important;
-      -webkit-text-fill-color: var(--header-text);
+      color: var(--text) !important;
+      -webkit-text-fill-color: var(--text);
       font-family: var(--font);
     }
     .download:visited,
     .download:hover,
     .download:active,
     .download:focus{
-      color: var(--header-text) !important;
-      -webkit-text-fill-color: var(--header-text);
+      color: var(--text) !important;
+      -webkit-text-fill-color: var(--text);
       text-decoration: underline;
       outline: none;
     }
@@ -140,7 +128,8 @@
     .menuBtn{
       appearance:none;
       background: transparent;
-      border: none;
+      border: none;          /* removed circle */
+      border-radius: 0;      /* removed circle */
       width: 34px;
       height: 28px;
       display:inline-flex;
@@ -150,7 +139,7 @@
       padding:0;
     }
     .menuBtn:hover{
-      opacity: 0.85;
+      opacity: 0.7;
     }
 
     .menuIcon{
@@ -163,7 +152,7 @@
       left:0;
       right:0;
       height:2px;
-      background: rgba(255,255,255,0.95); /* ALWAYS white */
+      background: rgba(0,0,0,0.75);
       border-radius: 2px;
       transition: transform 160ms ease, top 160ms ease, opacity 160ms ease;
     }
@@ -190,7 +179,8 @@
       inset: 0;
       z-index: 999;
       display:none;
-      background: var(--menu-bg);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(14px);
     }
     body.menu-open .overlay{ display:block; }
 
@@ -209,7 +199,7 @@
       padding: 90px 0 40px;
       display:flex;
       flex-direction:column;
-      gap: 28px;
+      gap: 28px; /* more spacing */
     }
 
     .menuItem{
@@ -221,15 +211,14 @@
       padding: 0;
 
       font-family: var(--font);
-      color: var(--menu-text);
+      color: var(--text);
     }
 
     .menuItemTitle{
       font-weight: 700;
-      font-size: clamp(52px, 7.5vw, 96px);
+      font-size: clamp(52px, 7.5vw, 96px); /* bigger */
       line-height: 1.02;
       letter-spacing: -0.6px;
-      color: var(--menu-text);
     }
 
     .menuItem:hover .menuItemTitle{
@@ -318,7 +307,7 @@
       }
 
       .menuItemTitle{
-        font-size: clamp(44px, 10vw, 72px);
+        font-size: clamp(44px, 10vw, 72px); /* big on mobile too */
       }
     }
   </style>
