@@ -197,7 +197,7 @@
 
     .overlayMenu{
       position: relative;
-      z-index: 2;        /* text layer above artwork */
+      z-index: 1;
 
       width: min(1400px, 92vw);
       margin: 0 auto;
@@ -222,7 +222,6 @@
       color: #fff;
       display:inline-block;
       width: 100%;
-      position: relative;
       z-index: 2;
     }
 
@@ -250,7 +249,7 @@
     /* ================= ARTWORK (FULL WIDTH BLEED, FIXED TO VIEWPORT) ================= */
 
     .menuArtArea{
-      position: fixed;       /* fixed to viewport, outside .overlayMenu */
+      position: fixed;       /* fixed to viewport */
       left: 0;
       right: 0;
       bottom: 0;
@@ -259,7 +258,7 @@
       height: 55vh;
       pointer-events: none;
       overflow: hidden;      /* crops bottom bleed */
-      z-index: 1;            /* behind text (which is z-index: 2) */
+      z-index: 1;
     }
 
     .menuArt{
@@ -357,6 +356,7 @@
 
       /* Mobile art adjustments - positioned lower, shows full top, bleeds off bottom */
       .menuArtArea{ 
+        top: auto;           /* remove any top positioning */
         bottom: -10vh;       /* push down so it bleeds off bottom of screen */
         height: 60vh;        /* taller container */
         overflow: visible;   /* allow bleed past bottom */
@@ -416,11 +416,11 @@
       <button class="menuItem" aria-selected="true" data-pdf="glass-construction-manual.pdf">
         <div class="menuItemTitle">Glass Manual</div>
       </button>
-    </div>
 
-    <!-- Artwork area - moved OUTSIDE .overlayMenu but still inside .overlay -->
-    <div class="menuArtArea" aria-hidden="true">
-      <img class="menuArt" src="menu-art.png" alt="">
+      <!-- Artwork area -->
+      <div class="menuArtArea" aria-hidden="true">
+        <img class="menuArt" src="menu-art.png" alt="">
+      </div>
     </div>
   </div>
 
