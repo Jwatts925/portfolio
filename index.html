@@ -255,29 +255,32 @@
 
     /* ================= ARTWORK (FULL TOP VISIBLE, BLEEDS 5% ON SIDES & BOTTOM) ================= */
 
+/* ================= ARTWORK (BREAKS OUT OF CONTAINER, FULL WIDTH BLEED) ================= */
+
     .menuArtArea{
-      position: absolute;
-      left: -5%;             /* extend the container 5% to the left */
-      right: -5%;            /* extend the container 5% to the right */
+      position: fixed;       /* CHANGED: fixed to viewport, not parent container */
+      left: 0;
+      right: 0;
       bottom: 0;
       
-      height: 55vh;          /* artwork display zone height */
+      width: 100vw;          /* ADDED: explicit full viewport width */
+      height: 55vh;          
       pointer-events: none;
-      overflow: visible;     /* allow the bleed to show */
+      overflow: hidden;      /* crop the bottom bleed */
       z-index: 1;
     }
     
     .menuArt{
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -5%;           /* push down 5% to bleed past bottom */
+      left: 50%;
+      bottom: -5%;           /* bleed 5% past bottom */
+      transform: translateX(-50%);
       
-      width: 100%;           /* fill the extended container (which is already 110% wide) */
-      height: 60vh;          /* scaled down to show more of the image */
+      width: 110vw;          /* 5% bleed on each side */
+      height: 60vh;          
       
-      object-fit: cover;     /* scales to cover the area */
-      object-position: center bottom;  /* show the bottom portion with skull */
+      object-fit: cover;     
+      object-position: center bottom;
     
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
@@ -360,16 +363,15 @@
         font-size: clamp(44px, 10vw, 72px);
       }
 
-            /* Mobile art adjustments */
+          
+      /* Mobile art adjustments */
       .menuArtArea{ 
-        left: -5%;
-        right: -5%;
-        height: 50vh;        /* artwork zone on mobile */
+        height: 50vh;        
       }
       .menuArt{
-        width: 100%;         /* fill extended container */
-        height: 55vh;        /* scaled for mobile */
-        bottom: -5%;         /* same 5% bottom bleed */
+        width: 110vw;        
+        height: 55vh;        
+        bottom: -5%;         
       }
     }
   </style>
@@ -641,6 +643,7 @@
   </script>
 </body>
 </html>
+
 
 
 
