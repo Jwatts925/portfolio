@@ -29,7 +29,9 @@
     }
 
     /* Lock page scroll when menu is open (prevents giant scrollbars) */
-    body.menu-open{ overflow: hidden; }
+    body.menu-open{
+      overflow: hidden;
+    }
 
     /* ================= HEADER ================= */
 
@@ -185,18 +187,15 @@
       backdrop-filter: none;
       opacity: 1;
 
-      overflow: hidden; /* keep everything clean */
+      overflow: hidden; /* prevents scrollbars */
     }
     body.menu-open .overlay{ display:block; }
 
     .overlayBackdrop{
       position:absolute;
       inset:0;
-      z-index: 0;
     }
 
-    /* IMPORTANT: allow overlayMenu to extend full height, but do NOT hide overflow here
-       so the artwork can be visible. The art area will handle its own cropping. */
     .overlayMenu{
       position: relative;
       z-index: 1;
@@ -209,8 +208,8 @@
       flex-direction:column;
       gap: 28px;
 
-      min-height: 100vh;
-      overflow: visible;
+      height: 100vh;
+      overflow: hidden;   /* no scrolling in menu */
     }
 
     .menuItem{
@@ -224,7 +223,7 @@
       color: #fff;
       display:inline-block;
       width: 100%;
-      z-index: 2; /* above artwork */
+      z-index: 2;
     }
 
     .menuItemTitle{
@@ -236,7 +235,7 @@
       transition: transform 160ms ease, font-weight 160ms ease, opacity 160ms ease;
     }
 
-    /* “Scale + weight pop” (no underline) */
+    /* "Scale + weight pop" (no underline) */
     .menuItem:hover .menuItemTitle{
       transform: scale(1.04);
       opacity: 0.98;
@@ -248,43 +247,33 @@
       opacity: 1;
     }
 
-    /* ================= ARTWORK (SHOWS ON WEB + MOBILE, FULL WIDTH, CROPS BOTTOM A BIT) ================= */
+    /* ================= ARTWORK (FULL WIDTH, BOTTOM CROPPED, NO SCROLL) ================= */
 
-    /* This block lives INSIDE overlayMenu.
-       It is positioned relative so we can move it up/down without affecting page scroll. */
     .menuArtArea{
-      position: relative;
-      width: 100vw;
-      margin-left: calc(50% - 50vw);
-
-      /* Scoot artwork UP closer to the tabs (negative pulls it upward) */
-      margin-top: -10px;
-
-      height: 58vh;          /* area reserved for the art */
-      overflow: hidden;      /* clean crop (no fade) */
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      
+      height: 55vh;          /* artwork display zone height */
       pointer-events: none;
+      overflow: hidden;      /* crops anything beyond this container */
       z-index: 1;
     }
 
     .menuArt{
       position: absolute;
-      left: 50%;
-      top: 0;                /* keep TOP of artwork visible */
-      transform: translateX(-50%);
-
-      width: 200vw;          /* guarantees full bleed on desktop */
-      height: 90vh;          /* tall enough so bottom can be cropped */
-      object-fit: cover;
-      object-position: top center;
-
-      /* bottom crop control (negative = crop more bottom) */
-      margin-bottom: -70px;
+      left: 0;
+      bottom: 0;             /* anchor to bottom */
+      
+      width: 100vw;          /* full viewport width */
+      height: 70vh;          /* taller than container = bottom gets cropped */
+      
+      object-fit: cover;     /* scales to cover width, crops height */
+      object-position: center bottom;  /* keeps bottom portion, crops top if needed */
 
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
-
-      -webkit-mask-image: none !important;
-      mask-image: none !important;
     }
 
     /* ================= LOADING BAR ================= */
@@ -364,15 +353,13 @@
         font-size: clamp(44px, 10vw, 72px);
       }
 
-      /* MOBILE: move artwork UP (more negative) and keep it slightly smaller */
-      .menuArtArea{
-        height: 52vh;
-        margin-top: -32px;  /* <-- this is the main “scoot up on mobile” knob */
+      /* Mobile art adjustments */
+      .menuArtArea{ 
+        height: 50vh;        /* slightly smaller on mobile */
       }
       .menuArt{
-        width: 170vw;
-        height: 76vh;
-        margin-bottom: -55px;
+        width: 100vw;        /* still full width */
+        height: 65vh;        /* slightly less tall on mobile */
       }
     }
   </style>
@@ -419,7 +406,7 @@
         <div class="menuItemTitle">Glass Manual</div>
       </button>
 
-      <!-- Artwork -->
+      <!-- Artwork (full width, bottom cropped) -->
       <div class="menuArtArea" aria-hidden="true">
         <img class="menuArt" src="menu-art.png" alt="">
       </div>
@@ -551,7 +538,7 @@
         hideLoading();
         viewer.innerHTML = `
           <div style="max-width:900px;margin:30px auto;padding:16px;border:1px solid rgba(180,0,0,0.18);background:rgba(255,0,0,0.04);border-radius:12px;color:#700;">
-            <strong>Couldn’t load the PDF:</strong> <code>${url}</code><br><br>
+            <strong>Couldn't load the PDF:</strong> <code>${url}</code><br><br>
             <code>${String(err)}</code>
           </div>
         `;
