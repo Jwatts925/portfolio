@@ -277,20 +277,19 @@
     
     .menuArt{
       position: absolute;
-      left: 50%;
-      bottom: 0;
-    
-      /* full-bleed left/right */
-      width: 100vw;
-    
-      /* fill the art zone vertically */
+      inset: 0;                 /* fill the entire .menuArtArea */
+      width: 100%;
       height: 100%;
     
-      transform: translateX(-50%) translateY(6vh); /* slight bleed past bottom */
+      /* fill the whole red space WITHOUT distortion */
+      object-fit: cover;
     
-      /* KEY: proportional scaling (no stretching) */
-      object-fit: contain;
-      object-position: bottom center;
+      /* keep the drawing anchored near the bottom */
+      object-position: center bottom;
+    
+      /* optional: push it slightly below the viewport + zoom in */
+      transform: translateY(6vh) scale(1.8);
+      transform-origin: bottom center;
     
       filter: var(--art-filter);
       -webkit-filter: var(--art-filter);
@@ -298,6 +297,7 @@
       -webkit-mask-image: none !important;
       mask-image: none !important;
     }
+
 
 
 
@@ -660,6 +660,7 @@
   </script>
 </body>
 </html>
+
 
 
 
