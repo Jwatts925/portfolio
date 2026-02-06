@@ -199,19 +199,26 @@
       position:absolute;
       inset:0;
     }
-
+    
     .overlayMenu{
       position: relative;
       z-index: 1;
-
+    
       width: min(1400px, 92vw);
       margin: 0 auto;
-
+    
+      /* keep your top padding for the menu items */
       padding: 90px 0 0;
+    
       display:flex;
       flex-direction:column;
       gap: 28px;
+    
+      /* NEW: make this a full-height column so we can pin art to bottom */
+      min-height: 100vh;
+      box-sizing: border-box;
     }
+
 
     .menuItem{
       appearance:none;
@@ -249,41 +256,41 @@
 
     /* ================= ARTWORK (PROPORTIONAL, FULL-WIDTH, BOTTOM BLEED) ================= */
     
+/* ================= ARTWORK (PINNED TO BOTTOM, LOWER QUADRANT, NO DISTORTION) ================= */
+
     .menuArtArea{
       width: 100vw;
       margin-left: calc(50% - 50vw);
     
-      /* give the text breathing room */
-      margin-top: clamp(18px, 6vh, 140px);
+      /* NEW: this pushes the art area to the bottom of the overlay */
+      margin-top: auto;
     
-      /* “band” height on desktop */
-      height: clamp(36vh, 46vh, 62vh);
+      /* Lower quadrant */
+      height: clamp(28vh, 34vh, 42vh);
     
       position: relative;
       pointer-events: none;
       z-index: 1;
     
-      /* important: allow it to visually spill downward */
-      overflow: visible;
+      overflow: visible; /* allow slight bottom bleed */
     }
     
-    /* make the IMG fill the band WITHOUT distortion */
     .menuArt{
       position: absolute;
-      left: 0;
-      top: 0;
+      left: 50%;
+      bottom: 0;
     
-      width: 100%;
+      /* full-bleed left/right */
+      width: 100vw;
+    
+      /* fill the art zone vertically */
       height: 100%;
     
-      /* key: proportional scaling, no stretching */
-      object-fit: cover;
+      transform: translateX(-50%) translateY(6vh); /* slight bleed past bottom */
     
-      /* keep top safe, crop mostly bottom */
-      object-position: center top;
-    
-      /* bleed past the bottom */
-      transform: translateY(8vh);
+      /* KEY: proportional scaling (no stretching) */
+      object-fit: contain;
+      object-position: bottom center;
     
       filter: var(--art-filter);
       -webkit-filter: var(--art-filter);
@@ -291,6 +298,7 @@
       -webkit-mask-image: none !important;
       mask-image: none !important;
     }
+
 
 
     /* ================= LOADING BAR ================= */
@@ -652,6 +660,7 @@
   </script>
 </body>
 </html>
+
 
 
 
