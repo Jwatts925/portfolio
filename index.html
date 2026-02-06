@@ -366,12 +366,20 @@
           
       /* Mobile art adjustments */
       .menuArtArea{ 
-        height: 50vh;        
+        height: 52vh;        /* slightly taller container */
       }
       .menuArt{
+        position: absolute;
+        top: 0;              /* CHANGED: anchor to TOP instead of bottom */
+        left: 50%;
+        bottom: auto;        /* remove bottom positioning */
+        transform: translateX(-50%);
+        
         width: 110vw;        
-        height: 55vh;        
-        bottom: -5%;         
+        height: 57vh;        /* height that fills container + bleeds bottom */
+        
+        object-fit: cover;
+        object-position: center top;  /* CHANGED: keep TOP visible, crop bottom */
       }
     }
   </style>
@@ -643,6 +651,7 @@
   </script>
 </body>
 </html>
+
 
 
 
