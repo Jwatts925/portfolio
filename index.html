@@ -15,13 +15,20 @@
       --page-gap: 18px;
       --bg: #ffffff;
       --page-bg: #ffffff;
+
       --text: #111;
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
+
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 
       --menu-bg: #EE6055;
       --menu-text: #ffffff;
+
+      --header-bg: #EE6055;
+      --header-text: #ffffff;
+      --header-divider: rgba(255,255,255,0.45);
+      --header-border: rgba(255,255,255,0.20);
     }
 
     body{
@@ -44,9 +51,8 @@
       gap: 16px;
 
       padding: 12px 14px;
-      background: rgba(255,255,255,0.88);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
     }
 
     header,
@@ -74,26 +80,29 @@
       gap:10px;
       white-space: nowrap;
       min-width: 0;
+      color: var(--header-text);
     }
     .brand .title{
       font-weight:700;
       font-size:16px;
       letter-spacing: 0.2px;
+      color: var(--header-text);
     }
     .brand .sub{
       font-size:12px;
-      color: var(--muted);
+      color: rgba(255,255,255,0.85);
       font-weight: 400;
     }
 
     .divider{
       width:1px;
       height:18px;
-      background: rgba(0,0,0,0.18);
+      background: var(--header-divider);
       align-self:center;
       flex: 0 0 auto;
     }
 
+    /* Download link: bold text (white) */
     .download{
       background: transparent;
       border: none;
@@ -106,16 +115,16 @@
       white-space:nowrap;
       cursor:pointer;
 
-      color: var(--text) !important;
-      -webkit-text-fill-color: var(--text);
+      color: var(--header-text) !important;
+      -webkit-text-fill-color: var(--header-text);
       font-family: var(--font);
     }
     .download:visited,
     .download:hover,
     .download:active,
     .download:focus{
-      color: var(--text) !important;
-      -webkit-text-fill-color: var(--text);
+      color: var(--header-text) !important;
+      -webkit-text-fill-color: var(--header-text);
       text-decoration: underline;
       outline: none;
     }
@@ -132,7 +141,6 @@
       appearance:none;
       background: transparent;
       border: none;
-      border-radius: 0;
       width: 34px;
       height: 28px;
       display:inline-flex;
@@ -142,7 +150,7 @@
       padding:0;
     }
     .menuBtn:hover{
-      opacity: 0.7;
+      opacity: 0.85;
     }
 
     .menuIcon{
@@ -155,18 +163,13 @@
       left:0;
       right:0;
       height:2px;
-      background: rgba(0,0,0,0.75);
+      background: rgba(255,255,255,0.95); /* ALWAYS white */
       border-radius: 2px;
-      transition: transform 160ms ease, top 160ms ease, opacity 160ms ease, background 160ms ease;
+      transition: transform 160ms ease, top 160ms ease, opacity 160ms ease;
     }
     .menuIcon span:nth-child(1){ top: 1px; }
     .menuIcon span:nth-child(2){ top: 7px; }
     .menuIcon span:nth-child(3){ top: 13px; }
-
-    /* When menu is open, make hamburger/X white for contrast */
-    body.menu-open .menuIcon span{
-      background: rgba(255,255,255,0.95);
-    }
 
     body.menu-open .menuIcon span:nth-child(1){
       top: 7px;
