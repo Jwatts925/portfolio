@@ -22,14 +22,15 @@
 
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 
-      /* ===== DARK HEADER + MENU THEME ===== */
-      --top-bg: #000000;
-      --top-text: #ffffff;
-      --top-muted: rgba(255,255,255,0.78);
-      --top-border: rgba(255,255,255,0.16);
-      --hamburger: rgba(255,255,255,0.92);
-      --overlay-bg: #000000;
-      --overlay-text: #ffffff;
+      /* ===== LIGHT PINK HEADER + MENU THEME ===== */
+      --top-bg: #F7B7C8;                 /* light pink */
+      --top-text: #ffffff;               /* white text */
+      --top-muted: rgba(255,255,255,0.88);
+      --top-border: rgba(255,255,255,0.35);
+      --hamburger: rgba(255,255,255,0.95);
+
+      --overlay-bg: #F7B7C8;             /* light pink menu */
+      --overlay-text: #ffffff;           /* white menu text */
     }
 
     body{
@@ -98,7 +99,7 @@
     .divider{
       width:1px;
       height:18px;
-      background: rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.55);
       align-self:center;
       flex: 0 0 auto;
     }
@@ -149,7 +150,7 @@
       cursor:pointer;
       padding:0;
     }
-    .menuBtn:hover{ opacity: 0.8; }
+    .menuBtn:hover{ opacity: 0.85; }
 
     .menuIcon{
       position: relative;
@@ -161,7 +162,7 @@
       left:0;
       right:0;
       height:2px;
-      background: var(--hamburger); /* white hamburger */
+      background: var(--hamburger);
       border-radius: 2px;
       transition: transform 160ms ease, top 160ms ease, opacity 160ms ease;
     }
@@ -180,9 +181,8 @@
       inset: 0;
       z-index: 999;
       display:none;
-
-      background: var(--overlay-bg);   /* black */
-      backdrop-filter: none;           /* opaque */
+      background: var(--overlay-bg); /* light pink */
+      backdrop-filter: none;         /* opaque */
     }
     body.menu-open .overlay{ display:block; }
 
@@ -214,7 +214,6 @@
 
       font-family: var(--font);
       color: var(--overlay-text);
-
       letter-spacing: 3px;
     }
 
