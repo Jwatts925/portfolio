@@ -230,21 +230,31 @@
     }
 
     .menuItemTitle{
-      font-weight: 700;
-      font-size: clamp(52px, 7.5vw, 96px);
-      line-height: 1.02;
-      transform-origin: left center;
-      transition: transform 160ms ease, opacity 160ms ease;
-    }
+  font-weight: 700;
+  font-size: clamp(52px, 7.5vw, 96px);
+  line-height: 1.02;
+  transform-origin: left center;
+  transform: scale(1);
+  transition: transform 160ms ease, opacity 160ms ease;
+}
 
-    .menuItem:hover .menuItemTitle{
-      transform: scale(1.04);
-      opacity: 0.98;
-    }
-    .menuItem[aria-selected="true"] .menuItemTitle{
-      transform: scale(1.06);
-      opacity: 1;
-    }
+/* Hover ALWAYS enlarges */
+.menuItem:hover .menuItemTitle{
+  transform: scale(1.06);
+  opacity: 1;
+}
+
+/* Selected has a base emphasis */
+.menuItem[aria-selected="true"] .menuItemTitle{
+  transform: scale(1.04);
+  opacity: 1;
+}
+
+/* Hover + selected = slightly bigger still */
+.menuItem[aria-selected="true"]:hover .menuItemTitle{
+  transform: scale(1.08);
+}
+
 
     /* ================= ART PANEL ================= */
 
@@ -666,3 +676,4 @@
   </script>
 </body>
 </html>
+
