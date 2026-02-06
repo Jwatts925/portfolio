@@ -18,7 +18,6 @@
       --text: #111;
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
-
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     }
 
@@ -29,7 +28,7 @@
       font-family: var(--font);
     }
 
-    /* ================= HEADER (DESKTOP DEFAULT) ================= */
+    /* ================= HEADER ================= */
 
     header{
       position: sticky;
@@ -38,14 +37,13 @@
 
       display:flex;
       align-items:center;
-      justify-content: center;
-      gap: 24px;
+      justify-content: space-between; /* left brand, right actions */
+      gap: 16px;
 
       padding: 12px 14px;
       background: rgba(255,255,255,0.88);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
     }
 
     /* Hide/show of the sticky top bar */
@@ -63,9 +61,8 @@
       display:flex;
       align-items:baseline;
       gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-start;
       white-space: nowrap;
+      min-width: 0;
     }
     .brand .title{
       font-weight:700;
@@ -78,49 +75,14 @@
       font-weight: 400;
     }
 
-    /* Controls row: tabs + divider + download */
-    .controls{
+    /* Right side: divider + Download + Menu button */
+    .actions{
       display:flex;
       align-items:center;
       gap:10px;
-      flex-wrap:nowrap;
-      justify-content:center;
+      white-space: nowrap;
     }
 
-    .tabs{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-
-    .tab{
-      appearance:none;
-      border:1px solid var(--border);
-      background:#fff;
-      color:var(--text);
-      border-radius:999px;
-      padding:8px 12px;
-      cursor:pointer;
-      font-size:13px;
-      line-height:1;
-      user-select:none;
-      white-space:nowrap;
-      font-family: var(--font);
-      font-weight: 400;
-    }
-    .tab:hover{
-      border-color: rgba(0,0,0,0.18);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-    .tab[aria-selected="true"]{
-      border-color: rgba(0,0,0,0.22);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      font-weight: 700;
-    }
-
-    /* Thin divider between Glass Manual and Download PDF (desktop + mobile) */
     .divider{
       width:1px;
       height:18px;
@@ -129,7 +91,7 @@
       flex: 0 0 auto;
     }
 
-    /* Download link: bold text (not a pill button) */
+    /* Download link: bold text */
     .download{
       background: transparent;
       border: none;
@@ -156,17 +118,147 @@
       outline: none;
     }
 
+    /* Menu icon button (hamburger / X) */
+    .menuBtn{
+      appearance:none;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      width: 40px;
+      height: 34px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      padding:0;
+    }
+    .menuBtn:hover{
+      border-color: rgba(0,0,0,0.18);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .menuIcon{
+      position: relative;
+      width: 18px;
+      height: 14px;
+    }
+    .menuIcon span{
+      position:absolute;
+      left:0;
+      right:0;
+      height:2px;
+      background: rgba(0,0,0,0.75);
+      border-radius: 2px;
+      transition: transform 160ms ease, top 160ms ease, opacity 160ms ease;
+    }
+    .menuIcon span:nth-child(1){ top: 1px; }
+    .menuIcon span:nth-child(2){ top: 6px; }
+    .menuIcon span:nth-child(3){ top: 11px; }
+
+    /* When open -> X */
+    body.menu-open .menuIcon span:nth-child(1){
+      top: 6px;
+      transform: rotate(45deg);
+    }
+    body.menu-open .menuIcon span:nth-child(2){
+      opacity: 0;
+    }
+    body.menu-open .menuIcon span:nth-child(3){
+      top: 6px;
+      transform: rotate(-45deg);
+    }
+
+    /* ================= FULLSCREEN MENU OVERLAY ================= */
+
+    .overlay{
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(12px);
+
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+    }
+    body.menu-open .overlay{
+      display:flex;
+    }
+
+    .overlayPanel{
+      width: min(520px, 92vw);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      padding: 18px;
+    }
+
+    .overlayTitle{
+      font-weight:700;
+      font-size:14px;
+      margin: 2px 2px 12px;
+      color: rgba(0,0,0,0.72);
+      letter-spacing: .2px;
+      text-align:center;
+    }
+
+    .overlayTabs{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 10px;
+    }
+
+    .tabItem{
+      appearance:none;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor:pointer;
+      font-size: 14px;
+      line-height: 1.1;
+      text-align:left;
+      font-family: var(--font);
+      font-weight: 500;
+    }
+    .tabItem:hover{
+      border-color: rgba(0,0,0,0.18);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .tabItem[aria-selected="true"]{
+      border-color: rgba(0,0,0,0.22);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      font-weight: 700;
+    }
+    .tabItem small{
+      display:block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+    .overlayHint{
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align:center;
+    }
+
     /* ================= LOADING BAR ================= */
 
     #loadingBar{
       position: sticky;
-      top: 56px; /* desktop header height-ish */
+      top: 56px;
       z-index: 9;
       height: 3px;
       width: 100%;
       background: transparent;
       opacity: 0;
-      transition: opacity 160ms ease;
+      transition: opacity 160ms ease, transform 220ms ease;
     }
     #loadingBar.show{ opacity: 1; }
 
@@ -179,9 +271,7 @@
     }
 
     /* ================= SPACER ================= */
-    #topSpacer{
-      height: 18px; /* desktop spacing */
-    }
+    #topSpacer{ height: 18px; }
 
     /* ================= PDF VIEWER ================= */
 
@@ -220,59 +310,13 @@
       100%{ background-position: -200% 0; }
     }
 
-    /* ================= MOBILE ONLY ================= */
+    /* Mobile tune */
     @media (max-width: 640px){
-      header{
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* On mobile: name + years on ONE ROW */
-      .brand{
-        flex-direction: row;
-        align-items: baseline;
-        justify-content: center;
-        text-align: center;
-        gap: 8px;
-        white-space: nowrap;
-      }
-
-      /* Force controls into one line */
-      .controls{
-        width: 100%;
-        justify-content: center;
-        flex-wrap: nowrap;
-        gap: 6px;
-      }
-
-      .tabs{
-        flex-wrap: nowrap;
-        gap: 6px;
-      }
-
-      /* Make tabs slightly smaller so Download stays inline */
-      .tab{
-        font-size: 11px;
-        padding: 6px 8px;
-      }
-
-      .download{
-        font-size: 11px;
-      }
-
-      .divider{
-        display:block;
-        height:18px;
-      }
-
-      #loadingBar{
-        top: 88px;
-      }
-
-      #topSpacer{
-        height: 14px;
-      }
+      .brand .title{ font-size: 15px; }
+      .download{ font-size: 12px; }
+      .menuBtn{ width: 38px; height: 32px; }
+      #loadingBar{ top: 56px; } /* header stays one row, so keep */
+      #topSpacer{ height: 14px; }
     }
   </style>
 </head>
@@ -284,18 +328,43 @@
       <div class="sub">2021–2026</div>
     </div>
 
-    <div class="controls">
-      <nav class="tabs" aria-label="Document tabs">
-        <button class="tab" aria-selected="true"  data-pdf="resume.pdf">Resume</button>
-        <button class="tab" aria-selected="false" data-pdf="portfolio.pdf">Portfolio</button>
-        <button class="tab" aria-selected="false" data-pdf="glass-construction-manual.pdf">Glass Manual</button>
-      </nav>
-
+    <div class="actions">
       <div class="divider" aria-hidden="true"></div>
-
       <a id="downloadBtn" class="download" href="resume.pdf" download>Download PDF</a>
+
+      <button id="menuBtn" class="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <div class="menuIcon" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+      </button>
     </div>
   </header>
+
+  <!-- Full-screen overlay menu -->
+  <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Document menu">
+    <div class="overlayPanel">
+      <div class="overlayTitle">Choose a document</div>
+
+      <div class="overlayTabs" aria-label="Document tabs">
+        <button class="tabItem" aria-selected="true"  data-pdf="resume.pdf">
+          Resume
+          <small>resume.pdf</small>
+        </button>
+
+        <button class="tabItem" aria-selected="false" data-pdf="portfolio.pdf">
+          Portfolio
+          <small>portfolio.pdf</small>
+        </button>
+
+        <button class="tabItem" aria-selected="false" data-pdf="glass-construction-manual.pdf">
+          Glass Manual
+          <small>glass-construction-manual.pdf</small>
+        </button>
+      </div>
+
+      <div class="overlayHint">Tap a document to load it. Press Esc to close.</div>
+    </div>
+  </div>
 
   <div id="loadingBar" aria-hidden="true"><div id="loadingBarInner"></div></div>
   <div id="topSpacer" aria-hidden="true"></div>
@@ -308,10 +377,13 @@
       "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
     const viewer = document.getElementById("viewer");
-    const tabs = Array.from(document.querySelectorAll(".tab"));
     const downloadBtn = document.getElementById("downloadBtn");
     const loadingBar = document.getElementById("loadingBar");
     const loadingBarInner = document.getElementById("loadingBarInner");
+
+    const menuBtn = document.getElementById("menuBtn");
+    const overlay = document.getElementById("overlay");
+    const menuItems = Array.from(document.querySelectorAll(".tabItem"));
 
     let observer = null;
     let loadToken = 0;
@@ -341,9 +413,9 @@
       }
     }
 
-    function setActive(tab){
-      tabs.forEach(t => t.setAttribute("aria-selected", t === tab ? "true" : "false"));
-      downloadBtn.href = tab.dataset.pdf;
+    function setActiveItem(item){
+      menuItems.forEach(b => b.setAttribute("aria-selected", b === item ? "true" : "false"));
+      downloadBtn.href = item.dataset.pdf;
     }
 
     function makeShell(pageNumber){
@@ -404,7 +476,6 @@
             if (token !== loadToken) return;
 
             const pageNumber = Number(entry.target.dataset.page);
-
             await renderPage(pdf, pageNumber, entry.target);
 
             setProgress(75 + (pageNumber / pdf.numPages) * 23);
@@ -426,27 +497,66 @@
       }
     }
 
-    // Tab click handler
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        setActive(tab);
+    /* ================= MENU OPEN/CLOSE ================= */
+
+    function openMenu(){
+      document.body.classList.add("menu-open");
+      menuBtn.setAttribute("aria-expanded", "true");
+      menuBtn.setAttribute("aria-label", "Close menu");
+    }
+
+    function closeMenu(){
+      document.body.classList.remove("menu-open");
+      menuBtn.setAttribute("aria-expanded", "false");
+      menuBtn.setAttribute("aria-label", "Open menu");
+    }
+
+    menuBtn.addEventListener("click", () => {
+      const open = document.body.classList.contains("menu-open");
+      if (open) closeMenu();
+      else openMenu();
+    });
+
+    // Clicking the backdrop closes
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeMenu();
+    });
+
+    // Esc closes
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMenu();
+    });
+
+    // Menu item click: load + auto close
+    menuItems.forEach(item => {
+      item.addEventListener("click", () => {
+        setActiveItem(item);
+        closeMenu();
         window.scrollTo({ top: 0, behavior: "instant" });
-        loadPdf(tab.dataset.pdf);
+        loadPdf(item.dataset.pdf);
       });
     });
 
-    // Initial load
-    const startTab = document.querySelector('.tab[aria-selected="true"]') || tabs[0];
-    setActive(startTab);
-    loadPdf(startTab.dataset.pdf);
+    // Initial load (selected item)
+    const startItem = document.querySelector('.tabItem[aria-selected="true"]') || menuItems[0];
+    setActiveItem(startItem);
+    loadPdf(startItem.dataset.pdf);
 
-    // Hide header on scroll down, show on scroll up
+    /* ================= HIDE HEADER ON SCROLL DOWN / SHOW ON SCROLL UP ================= */
     let lastY = window.scrollY;
     let ticking = false;
 
     function updateTopBar(){
       const y = window.scrollY;
       const delta = y - lastY;
+
+      // If menu is open, keep header visible
+      if (document.body.classList.contains("menu-open")){
+        document.body.classList.remove("top-hidden");
+        lastY = y;
+        ticking = false;
+        return;
+      }
 
       if (y < 10){
         document.body.classList.remove("top-hidden");
@@ -473,3 +583,4 @@
   </script>
 </body>
 </html>
+
