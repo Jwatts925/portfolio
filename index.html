@@ -37,7 +37,7 @@
 
       display:flex;
       align-items:center;
-      justify-content: space-between; /* left brand, right actions */
+      justify-content: space-between;
       gap: 16px;
 
       padding: 12px 14px;
@@ -46,7 +46,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* Hide/show of the sticky top bar */
     header,
     #loadingBar{
       transition: transform 220ms ease;
@@ -55,6 +54,15 @@
     body.top-hidden header,
     body.top-hidden #loadingBar{
       transform: translateY(-120%);
+    }
+
+    /* Left cluster: Brand + divider + Download */
+    .left{
+      display:flex;
+      align-items:baseline;
+      gap:12px;
+      min-width: 0;
+      white-space: nowrap;
     }
 
     .brand{
@@ -75,14 +83,6 @@
       font-weight: 400;
     }
 
-    /* Right side: divider + Download + Menu button */
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      white-space: nowrap;
-    }
-
     .divider{
       width:1px;
       height:18px;
@@ -91,7 +91,6 @@
       flex: 0 0 auto;
     }
 
-    /* Download link: bold text */
     .download{
       background: transparent;
       border: none;
@@ -118,7 +117,14 @@
       outline: none;
     }
 
-    /* Menu icon button (hamburger / X) */
+    /* Right: menu button */
+    .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      white-space: nowrap;
+    }
+
     .menuBtn{
       appearance:none;
       background: transparent;
@@ -136,6 +142,7 @@
       border-color: rgba(0,0,0,0.18);
       box-shadow: 0 2px 10px rgba(0,0,0,0.06);
     }
+
     .menuIcon{
       position: relative;
       width: 18px;
@@ -154,7 +161,6 @@
     .menuIcon span:nth-child(2){ top: 6px; }
     .menuIcon span:nth-child(3){ top: 11px; }
 
-    /* When open -> X */
     body.menu-open .menuIcon span:nth-child(1){
       top: 6px;
       transform: rotate(45deg);
@@ -167,85 +173,76 @@
       transform: rotate(-45deg);
     }
 
-    /* ================= FULLSCREEN MENU OVERLAY ================= */
+    /* ================= FULLSCREEN OVERLAY (BIG MENU) ================= */
 
     .overlay{
       position: fixed;
       inset: 0;
       z-index: 999;
-      background: rgba(255,255,255,0.94);
-      backdrop-filter: blur(12px);
-
       display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 24px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(14px);
     }
-    body.menu-open .overlay{
-      display:flex;
+    body.menu-open .overlay{ display:block; }
+
+    /* Clickable backdrop closes */
+    .overlayBackdrop{
+      position:absolute;
+      inset:0;
     }
 
-    .overlayPanel{
-      width: min(520px, 92vw);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: rgba(255,255,255,0.9);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-      padding: 18px;
-    }
+    /* Big menu list */
+    .overlayMenu{
+      position: relative;
+      z-index: 1;
 
-    .overlayTitle{
-      font-weight:700;
-      font-size:14px;
-      margin: 2px 2px 12px;
-      color: rgba(0,0,0,0.72);
-      letter-spacing: .2px;
-      text-align:center;
-    }
+      width: min(1200px, 92vw);
+      margin: 0 auto;
 
-    .overlayTabs{
+      padding: 90px 0 40px; /* pushes content down a bit */
       display:flex;
       flex-direction:column;
-      gap:10px;
-      margin-top: 10px;
+      gap: 22px;
     }
 
-    .tabItem{
+    .menuItem{
       appearance:none;
-      border:1px solid var(--border);
-      background:#fff;
-      color:var(--text);
-      border-radius: 12px;
-      padding: 12px 14px;
-      cursor:pointer;
-      font-size: 14px;
-      line-height: 1.1;
+      border:none;
+      background: transparent;
       text-align:left;
+      cursor:pointer;
+      padding: 0;
+
       font-family: var(--font);
-      font-weight: 500;
+      color: var(--text);
     }
-    .tabItem:hover{
-      border-color: rgba(0,0,0,0.18);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-    .tabItem[aria-selected="true"]{
-      border-color: rgba(0,0,0,0.22);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+
+    .menuItemTitle{
       font-weight: 700;
+      font-size: clamp(40px, 6.5vw, 80px);
+      line-height: 1.02;
+      letter-spacing: -0.4px;
     }
-    .tabItem small{
-      display:block;
+
+    .menuItem:hover .menuItemTitle{
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+      text-underline-offset: 8px;
+    }
+
+    /* subtle sublabel under each */
+    .menuItemSub{
       margin-top: 6px;
+      font-size: 13px;
       color: var(--muted);
       font-weight: 400;
-      font-size: 12px;
     }
 
-    .overlayHint{
-      margin-top: 14px;
-      font-size: 12px;
-      color: var(--muted);
-      text-align:center;
+    /* show which is selected */
+    .menuItem[aria-selected="true"] .menuItemTitle{
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+      text-underline-offset: 10px;
     }
 
     /* ================= LOADING BAR ================= */
@@ -310,28 +307,37 @@
       100%{ background-position: -200% 0; }
     }
 
-    /* Mobile tune */
+    /* Mobile tweaks */
     @media (max-width: 640px){
       .brand .title{ font-size: 15px; }
       .download{ font-size: 12px; }
       .menuBtn{ width: 38px; height: 32px; }
-      #loadingBar{ top: 56px; } /* header stays one row, so keep */
       #topSpacer{ height: 14px; }
+
+      /* Slightly tighter menu spacing on small screens */
+      .overlayMenu{
+        padding-top: 72px;
+        gap: 18px;
+      }
+      .menuItemSub{ font-size: 12px; }
     }
   </style>
 </head>
 
 <body>
   <header>
-    <div class="brand">
-      <div class="title">James Watts</div>
-      <div class="sub">2021–2026</div>
+    <div class="left">
+      <div class="brand">
+        <div class="title">James Watts</div>
+        <div class="sub">2021–2026</div>
+      </div>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <a id="downloadBtn" class="download" href="resume.pdf" download>Download PDF</a>
     </div>
 
-    <div class="actions">
-      <div class="divider" aria-hidden="true"></div>
-      <a id="downloadBtn" class="download" href="resume.pdf" download>Download PDF</a>
-
+    <div class="right">
       <button id="menuBtn" class="menuBtn" aria-label="Open menu" aria-expanded="false">
         <div class="menuIcon" aria-hidden="true">
           <span></span><span></span><span></span>
@@ -342,27 +348,23 @@
 
   <!-- Full-screen overlay menu -->
   <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Document menu">
-    <div class="overlayPanel">
-      <div class="overlayTitle">Choose a document</div>
+    <div class="overlayBackdrop" aria-hidden="true"></div>
 
-      <div class="overlayTabs" aria-label="Document tabs">
-        <button class="tabItem" aria-selected="true"  data-pdf="resume.pdf">
-          Resume
-          <small>resume.pdf</small>
-        </button>
+    <div class="overlayMenu" aria-label="Document tabs">
+      <button class="menuItem" aria-selected="true" data-pdf="resume.pdf">
+        <div class="menuItemTitle">Resume</div>
+        <div class="menuItemSub">Tap to view</div>
+      </button>
 
-        <button class="tabItem" aria-selected="false" data-pdf="portfolio.pdf">
-          Portfolio
-          <small>portfolio.pdf</small>
-        </button>
+      <button class="menuItem" aria-selected="false" data-pdf="portfolio.pdf">
+        <div class="menuItemTitle">Portfolio</div>
+        <div class="menuItemSub">Tap to view</div>
+      </button>
 
-        <button class="tabItem" aria-selected="false" data-pdf="glass-construction-manual.pdf">
-          Glass Manual
-          <small>glass-construction-manual.pdf</small>
-        </button>
-      </div>
-
-      <div class="overlayHint">Tap a document to load it. Press Esc to close.</div>
+      <button class="menuItem" aria-selected="false" data-pdf="glass-construction-manual.pdf">
+        <div class="menuItemTitle">Glass Manual</div>
+        <div class="menuItemSub">Tap to view</div>
+      </button>
     </div>
   </div>
 
@@ -383,7 +385,8 @@
 
     const menuBtn = document.getElementById("menuBtn");
     const overlay = document.getElementById("overlay");
-    const menuItems = Array.from(document.querySelectorAll(".tabItem"));
+    const backdrop = overlay.querySelector(".overlayBackdrop");
+    const menuItems = Array.from(document.querySelectorAll(".menuItem"));
 
     let observer = null;
     let loadToken = 0;
@@ -479,7 +482,6 @@
             await renderPage(pdf, pageNumber, entry.target);
 
             setProgress(75 + (pageNumber / pdf.numPages) * 23);
-
             if (pageNumber === 1) hideLoading();
           }
         }, { rootMargin: "900px 0px" });
@@ -503,6 +505,9 @@
       document.body.classList.add("menu-open");
       menuBtn.setAttribute("aria-expanded", "true");
       menuBtn.setAttribute("aria-label", "Close menu");
+
+      // Keep header visible while menu open
+      document.body.classList.remove("top-hidden");
     }
 
     function closeMenu(){
@@ -517,17 +522,12 @@
       else openMenu();
     });
 
-    // Clicking the backdrop closes
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeMenu();
-    });
+    backdrop.addEventListener("click", () => closeMenu());
 
-    // Esc closes
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeMenu();
     });
 
-    // Menu item click: load + auto close
     menuItems.forEach(item => {
       item.addEventListener("click", () => {
         setActiveItem(item);
@@ -537,8 +537,9 @@
       });
     });
 
-    // Initial load (selected item)
-    const startItem = document.querySelector('.tabItem[aria-selected="true"]') || menuItems[0];
+    /* ================= INITIAL LOAD ================= */
+
+    const startItem = document.querySelector('.menuItem[aria-selected="true"]') || menuItems[0];
     setActiveItem(startItem);
     loadPdf(startItem.dataset.pdf);
 
@@ -583,4 +584,3 @@
   </script>
 </body>
 </html>
-
