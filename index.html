@@ -249,7 +249,7 @@
     /* ================= ARTWORK (FULL WIDTH BLEED, FIXED TO VIEWPORT) ================= */
 
     .menuArtArea{
-      position: fixed;       /* CHANGED: fixed to viewport */
+      position: fixed;       /* fixed to viewport */
       left: 0;
       right: 0;
       bottom: 0;
@@ -354,14 +354,25 @@
         font-size: clamp(44px, 10vw, 72px);
       }
 
-      /* Mobile art adjustments */
+      /* Mobile art adjustments - positioned lower, shows full top, bleeds off bottom */
       .menuArtArea{ 
-        height: 50vh;        
+        top: auto;           /* remove any top positioning */
+        bottom: -10vh;       /* push down so it bleeds off bottom of screen */
+        height: 60vh;        /* taller container */
+        overflow: visible;   /* allow bleed past bottom */
       }
       .menuArt{
-        width: 110vw;        
-        height: 55vh;        
-        bottom: -5%;         
+        position: absolute;
+        top: 0;              /* anchor to TOP of container to show full top */
+        left: 50%;
+        bottom: auto;        /* remove bottom positioning */
+        transform: translateX(-50%);
+        
+        width: 110vw;        /* 5% bleed on sides */
+        height: 65vh;        /* tall enough to extend past bottom */
+        
+        object-fit: cover;
+        object-position: center top;  /* prioritize showing the top */
       }
     }
   </style>
@@ -406,7 +417,7 @@
         <div class="menuItemTitle">Glass Manual</div>
       </button>
 
-      <!-- Artwork area moved outside but will still appear -->
+      <!-- Artwork area -->
       <div class="menuArtArea" aria-hidden="true">
         <img class="menuArt" src="menu-art.png" alt="">
       </div>
