@@ -19,9 +19,6 @@
       --muted: rgba(0,0,0,0.55);
       --border: rgba(0,0,0,0.10);
       --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-
-      --menu-bg: #000;
-      --menu-text: #fff;
     }
 
     body{
@@ -59,6 +56,7 @@
       transform: translateY(-120%);
     }
 
+    /* Left cluster: Brand + divider + Download */
     .left{
       display:flex;
       align-items:baseline;
@@ -77,7 +75,7 @@
     .brand .title{
       font-weight:700;
       font-size:16px;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.2px;
     }
     .brand .sub{
       font-size:12px;
@@ -119,6 +117,7 @@
       outline: none;
     }
 
+    /* Right: menu button (NO circle) */
     .right{
       display:flex;
       align-items:center;
@@ -159,9 +158,17 @@
     .menuIcon span:nth-child(2){ top: 7px; }
     .menuIcon span:nth-child(3){ top: 13px; }
 
-    body.menu-open .menuIcon span:nth-child(1){ top: 7px; transform: rotate(45deg); }
-    body.menu-open .menuIcon span:nth-child(2){ opacity: 0; }
-    body.menu-open .menuIcon span:nth-child(3){ top: 7px; transform: rotate(-45deg); }
+    body.menu-open .menuIcon span:nth-child(1){
+      top: 7px;
+      transform: rotate(45deg);
+    }
+    body.menu-open .menuIcon span:nth-child(2){
+      opacity: 0;
+    }
+    body.menu-open .menuIcon span:nth-child(3){
+      top: 7px;
+      transform: rotate(-45deg);
+    }
 
     /* ================= FULLSCREEN OVERLAY MENU ================= */
 
@@ -171,7 +178,9 @@
       z-index: 999;
       display:none;
 
-      background: var(--menu-bg); /* opaque */
+      background: #000;          /* black menu */
+      backdrop-filter: none;     /* ensure opaque */
+      opacity: 1;
     }
     body.menu-open .overlay{ display:block; }
 
@@ -187,10 +196,10 @@
       width: min(1400px, 92vw);
       margin: 0 auto;
 
-      padding: 90px 0 0;
+      padding: 90px 0 0; /* leave room for top */
       display:flex;
       flex-direction:column;
-      gap: 26px;
+      gap: 28px;
     }
 
     .menuItem{
@@ -200,72 +209,66 @@
       text-align:left;
       cursor:pointer;
       padding: 0;
-
       font-family: var(--font);
-      color: var(--menu-text);
+      color: #fff;
+      display:inline-block;
+      width: 100%;
     }
 
     .menuItemTitle{
       font-weight: 700;
       font-size: clamp(52px, 7.5vw, 96px);
       line-height: 1.02;
-      letter-spacing: 0.04em;
-      transform: translateY(0) scale(1);
-      transition: transform 140ms ease, opacity 140ms ease;
-      opacity: 0.95;
+      letter-spacing: 0; /* keep as-is */
+      transform-origin: left center;
+      transition: transform 160ms ease, font-weight 160ms ease, opacity 160ms ease;
     }
 
+    /* “Scale + weight pop” (no underline) */
     .menuItem:hover .menuItemTitle{
-      transform: translateY(-2px) scale(1.03);
-      opacity: 1;
+      transform: scale(1.04);
+      opacity: 0.98;
+      font-weight: 700;
     }
     .menuItem[aria-selected="true"] .menuItemTitle{
-      transform: translateY(-2px) scale(1.03);
+      transform: scale(1.06);
+      font-weight: 700;
       opacity: 1;
     }
 
-    /* ============== ARTWORK (NO OVERLAY FADE; MASK THE IMAGE ITSELF) ============== */
+    /* ================= ARTWORK (FULL BLEED, NO FADE, TOP NOT CUT, BOTTOM SPILLS) ================= */
 
+    /* Put your file in the SAME folder as index.html.
+       Name it exactly: menu-art.png (or change the filename below). */
     .menuArtArea{
       width: 100vw;
       margin-left: calc(50% - 50vw);
       margin-top: 18px;
 
-      height: 48vh;         /* controls how tall the art section is */
-      overflow: hidden;     /* keep everything clean inside the viewport */
+      height: 62vh;       /* tall section */
+      overflow: visible;  /* allow spill */
       position: relative;
+      pointer-events: none; /* art never blocks clicks */
     }
 
     .menuArt{
       position: absolute;
       left: 50%;
-      top: 0;               /* IMPORTANT: keep the top visible */
+      top: 0;                      /* keep TOP visible */
       transform: translateX(-50%);
 
-      width: min(1800px, 125vw);
-      height: 100%;
-      object-fit: contain;  /* IMPORTANT: no cropping; top stays */
-      object-position: top center;
+      width: 120vw;                /* full bleed */
+      height: 85vh;                /* bottom spills past view */
+      object-fit: cover;           /* fill width proportionally */
+      object-position: top center; /* top not cut */
 
-      /* If your art is black lines on transparent bg, invert to white */
+      /* If your art is black lines on transparent, this makes lines white */
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
 
-      /* This is the key: the image fades to transparent at L/R + bottom,
-         but stays fully visible at the top (no fade at top). */
-      -webkit-mask-image:
-        linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
-        linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
-      -webkit-mask-composite: source-in;
-      -webkit-mask-repeat: no-repeat;
-      -webkit-mask-size: 100% 100%, 100% 100%;
-
-      mask-image:
-        linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
-        linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
-      mask-composite: intersect;
-      mask-repeat: no-repeat;
-      mask-size: 100% 100%, 100% 100%;
+      /* NO fades */
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
     }
 
     /* ================= LOADING BAR ================= */
@@ -330,6 +333,7 @@
       100%{ background-position: -200% 0; }
     }
 
+    /* Mobile tweaks */
     @media (max-width: 640px){
       .brand .title{ font-size: 15px; }
       .download{ font-size: 12px; }
@@ -337,19 +341,18 @@
 
       .overlayMenu{
         padding-top: 72px;
-        gap: 20px;
+        gap: 22px;
       }
 
       .menuItemTitle{
         font-size: clamp(44px, 10vw, 72px);
       }
 
-      .menuArtArea{
-        height: 52vh;
-      }
-
+      /* More “full screen” art on mobile */
+      .menuArtArea{ height: 70vh; }
       .menuArt{
-        width: 150vw;
+        width: 140vw;
+        height: 95vh;
       }
     }
   </style>
@@ -377,6 +380,7 @@
     </div>
   </header>
 
+  <!-- Full-screen overlay menu -->
   <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Document menu">
     <div class="overlayBackdrop" aria-hidden="true"></div>
 
@@ -393,7 +397,7 @@
         <div class="menuItemTitle">Glass Manual</div>
       </button>
 
-      <!-- Artwork -->
+      <!-- Artwork: put your image in the repo root and name it menu-art.png -->
       <div class="menuArtArea" aria-hidden="true">
         <img class="menuArt" src="menu-art.png" alt="">
       </div>
@@ -451,6 +455,7 @@
     function setActiveItem(item){
       menuItems.forEach(b => b.setAttribute("aria-selected", b === item ? "true" : "false"));
       downloadBtn.href = item.dataset.pdf;
+      downloadBtn.setAttribute("download", "");
     }
 
     function makeShell(pageNumber){
@@ -531,6 +536,8 @@
       }
     }
 
+    /* ================= MENU OPEN/CLOSE ================= */
+
     function openMenu(){
       document.body.classList.add("menu-open");
       menuBtn.setAttribute("aria-expanded", "true");
@@ -565,11 +572,13 @@
       });
     });
 
+    /* ================= INITIAL LOAD ================= */
+
     const startItem = document.querySelector('.menuItem[aria-selected="true"]') || menuItems[0];
     setActiveItem(startItem);
     loadPdf(startItem.dataset.pdf);
 
-    // Hide header on scroll down, show on scroll up
+    /* ================= HIDE HEADER ON SCROLL DOWN / SHOW ON SCROLL UP ================= */
     let lastY = window.scrollY;
     let ticking = false;
 
