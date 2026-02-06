@@ -178,9 +178,13 @@
       z-index: 999;
       display:none;
 
-      background: #000;
+      background: #000;  /* menu background */
       backdrop-filter: none;
       opacity: 1;
+
+      /* allow scrolling if needed (so artwork can extend past bottom without being clipped) */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     body.menu-open .overlay{ display:block; }
 
@@ -236,14 +240,17 @@
       opacity: 1;
     }
 
-    /* ================= ARTWORK (FULL BLEED, NO FADE, TOP NOT CUT, BOTTOM SPILLS) ================= */
+    /* ================= ARTWORK (NO CROPPING, STARTS NEAR TABS, BOTTOM NOT CUT) ================= */
 
+    /* Put your file in the SAME folder as index.html.
+       Name it exactly: menu-art.png (or change the filename below). */
     .menuArtArea{
       width: 100vw;
       margin-left: calc(50% - 50vw);
-      margin-top: 18px;
+      margin-top: 10px;
 
-      height: 62vh;
+      /* this is the “layout slot” below the menu items */
+      height: 68vh;
       overflow: visible;
       position: relative;
       pointer-events: none;
@@ -252,14 +259,22 @@
     .menuArt{
       position: absolute;
       left: 50%;
-      top: -500px;
+
+      /* ✅ This scoots it UP so it starts near the menu text (like your screenshot) */
+      top: -120px;
+
+      /* keep horizontal centering */
       transform: translateX(-50%);
 
+      /* full-bleed look */
       width: 120vw;
-      height: 85vh;
-      object-fit: cover;
+      height: 95vh;
+
+      /* ✅ KEY CHANGE: no cropping */
+      object-fit: contain;
       object-position: top center;
 
+      /* keep outlines white */
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
 
@@ -329,7 +344,7 @@
       100%{ background-position: -200% 0; }
     }
 
-    /* Mobile tweaks */
+    /* ================= MOBILE ================= */
     @media (max-width: 640px){
       .brand .title{ font-size: 15px; }
       .download{ font-size: 12px; }
@@ -344,16 +359,22 @@
         font-size: clamp(44px, 10vw, 72px);
       }
 
-      /* Slightly smaller artwork on mobile (same effect: top visible, bottom spills) */
-      .menuArtArea{ height: 64vh; }
+      /* Mobile artwork: slightly smaller + scoot up */
+      .menuArtArea{
+        height: 62vh;
+        margin-top: 8px;
+      }
+
       .menuArt{
         width: 130vw;
-        height: 88vh;
+        height: 90vh;
 
-        top: -120px;
+        /* ✅ scoot UP on mobile too */
+        top: -90px;
 
-        /* ✅ NUDGE RIGHT ON MOBILE ONLY */
-        transform: translateX(calc(-50% + 72px));
+        /* if you still want it nudged right on mobile, keep this:
+           (adjust 0px -> 20px -> 40px, etc.) */
+        transform: translateX(calc(-50% + 24px));
       }
     }
   </style>
@@ -369,7 +390,7 @@
 
       <div class="divider" aria-hidden="true"></div>
 
-      <!-- Starts as Glass Manual now -->
+      <!-- Starts as Glass Manual -->
       <a id="downloadBtn" class="download" href="glass-construction-manual.pdf" download>Download PDF</a>
     </div>
 
@@ -395,7 +416,6 @@
         <div class="menuItemTitle">Portfolio</div>
       </button>
 
-      <!-- Default selection is Glass Manual -->
       <button class="menuItem" aria-selected="true" data-pdf="glass-construction-manual.pdf">
         <div class="menuItemTitle">Glass Manual</div>
       </button>
@@ -625,8 +645,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
