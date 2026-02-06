@@ -247,61 +247,51 @@
 
     /* ================= ARTWORK (NO TOP CROP, BLEED L/R/BOTTOM, NO OVERLAP) ================= */
 
+    /* ================= ARTWORK (PROPORTIONAL, FULL-WIDTH, BOTTOM BLEED) ================= */
+    
     .menuArtArea{
       width: 100vw;
       margin-left: calc(50% - 50vw);
-
-      /* Key: on large/tall screens, this pushes art down so it doesn't invade text */
+    
+      /* give the text breathing room */
       margin-top: clamp(18px, 6vh, 140px);
-
-      /* The "zone" the art lives in */
-      height: clamp(34vh, 40vh, 52vh);
-
+    
+      /* “band” height on desktop */
+      height: clamp(36vh, 46vh, 62vh);
+    
       position: relative;
       pointer-events: none;
       z-index: 1;
+    
+      /* important: allow it to visually spill downward */
+      overflow: visible;
     }
-
-    /* DEBUG BOX (shows ONLY if image fails to load) */
-    .menuArtMissing{
-      display:none;
-      width: 100%;
-      height: 100%;
-      border: 2px dashed rgba(255,255,255,0.35);
-      border-radius: 16px;
-      color: rgba(255,255,255,0.65);
-      font: 600 14px/1.2 var(--font);
-      align-items: center;
-      justify-content: center;
-      letter-spacing: 0.4px;
-    }
-    .menuArtArea.missing .menuArtMissing{ display:flex; }
-
+    
+    /* make the IMG fill the band WITHOUT distortion */
     .menuArt{
       position: absolute;
-      left: 50%;
-
-      /* Bleed down (slight crop at bottom), but do NOT rise into the text */
-      bottom: -10vh;
-
-      transform: translateX(-50%);
-
-      /* bleed left/right */
-      width: 160vw;
-
-      /* big enough to spill down, but capped */
-      height: clamp(55vh, 75vh, 85vh);
-
-      /* IMPORTANT: no top cropping */
-      object-fit: absolute;
-      object-position: top center;
-
+      left: 0;
+      top: 0;
+    
+      width: 100%;
+      height: 100%;
+    
+      /* key: proportional scaling, no stretching */
+      object-fit: cover;
+    
+      /* keep top safe, crop mostly bottom */
+      object-position: center top;
+    
+      /* bleed past the bottom */
+      transform: translateY(8vh);
+    
       filter: var(--art-filter);
       -webkit-filter: var(--art-filter);
-
+    
       -webkit-mask-image: none !important;
       mask-image: none !important;
     }
+
 
     /* ================= LOADING BAR ================= */
 
@@ -662,5 +652,6 @@
   </script>
 </body>
 </html>
+
 
 
