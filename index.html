@@ -173,11 +173,12 @@
       gap: var(--page-gap);
     }
 
+    /* ✅ Your requested page styling (applies to desktop + mobile) */
     .page{
       width: min(1100px, 96vw);
       background: var(--page-bg);
-      border-radius: 14px;
-      box-shadow: var(--shadow);
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       overflow:hidden;
       border: 1px solid var(--border);
     }
@@ -201,7 +202,7 @@
     }
 
     /* ================= MOBILE ONLY =================
-       Goal: brand on its own row, and controls (3 tabs + download) on ONE line
+       Brand on its own row, controls in one line, and download not blue.
     */
     @media (max-width: 640px){
       header{
@@ -227,11 +228,11 @@
       }
 
       .tabs{
-        flex-wrap: nowrap;   /* no wrapping on mobile */
+        flex-wrap: nowrap;
         gap: 6px;
       }
 
-      /* Make pills a bit smaller */
+      /* Smaller pills so Download fits inline */
       .tab,
       .download{
         font-size: 11px;
@@ -317,8 +318,6 @@
     function setActive(tab){
       tabs.forEach(t => t.setAttribute("aria-selected", t === tab ? "true" : "false"));
       downloadBtn.href = tab.dataset.pdf;
-
-      // Ensure download link never goes "link-blue" in some mobile states
       downloadBtn.style.color = "var(--text)";
     }
 
@@ -360,7 +359,7 @@
 
         task.onProgress = (p) => {
           if (!p || !p.total) return;
-          setProgress(10 + (p.loaded / p.total) * 60); // 10% -> 70%
+          setProgress(10 + (p.loaded / p.total) * 60);
         };
 
         const pdf = await task.promise;
